@@ -32,7 +32,8 @@ def preprocess_real_environment_image(
     resize_width=800,
     blur_kernel=5,
     threshold_value=120,
-    use_canny=False
+    use_canny=False,
+    use_hsv_correction=True
 ):
     """
     Preprocess a real environment image and generate a binary map.
@@ -57,11 +58,11 @@ def preprocess_real_environment_image(
     new_height = int(height * scale)
     resized_rgb = cv2.resize(original_rgb, (resize_width, new_height))
 
-    #show_and_save("01 Original Resized Image", resized_rgb, output_dir)
+    # show_and_save("01 Original Resized Image", resized_rgb, output_dir)
 
     # 3. Convert to grayscale
     gray = cv2.cvtColor(resized_rgb, cv2.COLOR_RGB2GRAY)
-    #show_and_save("02 Grayscale Image", gray, output_dir)
+    # show_and_save("02 Grayscale Image", gray, output_dir)
 
     # 4. Noise reduction using Gaussian Blur
     # sure blur_kernel is odd number
@@ -70,12 +71,12 @@ def preprocess_real_environment_image(
         blur_kernel += 1
 
     blurred = cv2.GaussianBlur(gray, (blur_kernel, blur_kernel), 0)
-    #show_and_save("03 Gaussian Blur", blurred, output_dir)
+    # show_and_save("03 Gaussian Blur", blurred, output_dir)
 
     # 5. Threshold or Canny edge detection
     if use_canny:
         edges = cv2.Canny(blurred, 50, 150)
-        #show_and_save("04 Canny Edge Detection", edges, output_dir)
+        # show_and_save("04 Canny Edge Detection", edges, output_dir)
 
         # Invert edges to create a rough traversable map
         binary_map = cv2.bitwise_not(edges)
@@ -90,7 +91,56 @@ def preprocess_real_environment_image(
             255,
             cv2.THRESH_BINARY
         )
-        #show_and_save("04 Binary Threshold Map", binary_map, output_dir)
+        # show_and_save("04 Binary Threshold Map", binary_map, output_dir)
+
+    # 5.1 HSV-based traversable area detection for satellite images
+    if use_hsv_correction:
+        hsv = cv2.cvtColor(resized_rgb, cv2.COLOR_RGB2HSV)
+
+        # Green areas: grass / vegetation / open ground
+        lower_green = np.array([30, 20, 30])
+        upper_green = np.array([95, 255, 240])
+        green_mask = cv2.inRange(hsv, lower_green, upper_green)
+
+        # Brown / yellow areas: soil, dirt path, dry grass
+        lower_brown = np.array([5, 15, 40])
+        upper_brown = np.array([40, 220, 240])
+        brown_mask = cv2.inRange(hsv, lower_brown, upper_brown)
+
+        # Light open ground: pale soil / dry grass / open area
+        lower_light_ground = np.array([15, 5, 100])
+        upper_light_ground = np.array([45, 130, 255])
+        light_ground_mask = cv2.inRange(hsv, lower_light_ground, upper_light_ground)
+
+        # Combine traversable areas
+        traversable_mask = cv2.bitwise_or(green_mask, brown_mask)
+        traversable_mask = cv2.bitwise_or(traversable_mask, light_ground_mask)
+
+        # Bright + low saturation = roofs / concrete / buildings
+        lower_roof = np.array([0, 0, 150])
+        upper_roof = np.array([180, 70, 255])
+        roof_mask = cv2.inRange(hsv, lower_roof, upper_roof)
+
+        # Very dark regions = tree shadows / dense obstacles
+        lower_dark = np.array([0, 0, 0])
+        upper_dark = np.array([180, 255, 35])
+        dark_mask = cv2.inRange(hsv, lower_dark, upper_dark)
+
+        # Blue map marker / UI elements
+        lower_blue = np.array([90, 50, 50])
+        upper_blue = np.array([130, 255, 255])
+        blue_mask = cv2.inRange(hsv, lower_blue, upper_blue)
+
+        # Combine obstacle masks
+        obstacle_mask = cv2.bitwise_or(roof_mask, dark_mask)
+        obstacle_mask = cv2.bitwise_or(obstacle_mask, blue_mask)
+
+        # Remove obstacle areas from traversable area
+        traversable_mask[obstacle_mask == 255] = 0
+
+        # Use HSV result as the final binary map
+        # White = traversable, black = obstacle
+        binary_map = traversable_mask
 
     # 6. Morphological processing
     # Remove small noise and fill small holes
@@ -133,5 +183,6 @@ if __name__ == "__main__":
         resize_width=800,
         blur_kernel=5,
         threshold_value=120,
-        use_canny=False
+        use_canny=False,
+        use_hsv_correction=True
     )
