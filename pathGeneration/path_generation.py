@@ -26,6 +26,32 @@ def show_and_save(title, image, output_dir):
     plt.show()
 
 
+def show_comparison(original_image, processed_image, output_dir):
+    """
+    Show original image and processed binary map side by side.
+    """
+    os.makedirs(output_dir, exist_ok=True)
+
+    plt.figure(figsize=(14, 6))
+
+    plt.subplot(1, 2, 1)
+    plt.imshow(original_image)
+    plt.title("Original Resized Image")
+    plt.axis("off")
+
+    plt.subplot(1, 2, 2)
+    plt.imshow(processed_image, cmap="gray")
+    plt.title("Cleaned Binary Map")
+    plt.axis("off")
+
+    plt.tight_layout()
+
+    comparison_path = os.path.join(output_dir, "comparison_original_vs_binary.png")
+    plt.savefig(comparison_path, dpi=300)
+
+    plt.show()
+
+
 def preprocess_real_environment_image(
     image_path,
     output_dir="output_preprocessing",
@@ -57,8 +83,6 @@ def preprocess_real_environment_image(
     scale = resize_width / width
     new_height = int(height * scale)
     resized_rgb = cv2.resize(original_rgb, (resize_width, new_height))
-
-    # show_and_save("01 Original Resized Image", resized_rgb, output_dir)
 
     # 3. Convert to grayscale
     gray = cv2.cvtColor(resized_rgb, cv2.COLOR_RGB2GRAY)
@@ -149,7 +173,8 @@ def preprocess_real_environment_image(
     opened = cv2.morphologyEx(binary_map, cv2.MORPH_OPEN, kernel)
     closed = cv2.morphologyEx(opened, cv2.MORPH_CLOSE, kernel)
 
-    show_and_save("05 Cleaned Binary Map", closed, output_dir)
+    # Show original image and processed binary map together
+    show_comparison(resized_rgb, closed, output_dir)
 
     # 7. Convert to occupancy grid
     # 0 = free space, 1 = obstacle
