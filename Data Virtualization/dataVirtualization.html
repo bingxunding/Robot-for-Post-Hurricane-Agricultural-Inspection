@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#c8c6c5",
+                        "inverse-surface": "#e2e3dd",
+                        "inverse-primary": "#3e6842",
+                        "surface-container": "#1e201d",
+                        "primary-fixed": "#bfeebf",
+                        "tertiary-fixed": "#ffd9e1",
+                        "surface-dim": "#121411",
+                        "primary-fixed-dim": "#a4d2a4",
+                        "on-primary-fixed-variant": "#274f2c",
+                        "outline": "#8c9389",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "on-primary": "#0e3818",
+                        "error-container": "#93000a",
+                        "on-secondary-container": "#b7b5b4",
+                        "error": "#ffb4ab",
+                        "surface-bright": "#373a36",
+                        "on-surface-variant": "#c2c9be",
+                        "on-primary-container": "#224b28",
+                        "secondary-container": "#474746",
+                        "on-secondary-fixed": "#1b1b1c",
+                        "inverse-on-surface": "#2f312e",
+                        "on-tertiary": "#512030",
+                        "surface-container-lowest": "#0c0f0c",
+                        "on-tertiary-fixed-variant": "#6b3647",
+                        "on-tertiary-fixed": "#370b1c",
+                        "tertiary-fixed-dim": "#fcb2c6",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-container": "#e19bae",
+                        "on-tertiary-container": "#653142",
+                        "tertiary": "#ffb6c9",
+                        "on-background": "#e2e3dd",
+                        "surface-variant": "#333532",
+                        "surface": "#121411",
+                        "on-error": "#690005",
+                        "surface-tint": "#a4d2a4",
+                        "surface-container-high": "#282b27",
+                        "primary-container": "#8dba8e",
+                        "primary": "#a8d6a8",
+                        "on-secondary-fixed-variant": "#474746",
+                        "surface-container-highest": "#333532",
+                        "outline-variant": "#424940",
+                        "secondary-fixed": "#e5e2e1",
+                        "background": "#121411",
+                        "on-surface": "#e2e3dd",
+                        "surface-container-low": "#1a1c19",
+                        "on-secondary": "#303030",
+                        "on-primary-fixed": "#002108"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "base": "4px",
+                        "sm": "8px",
+                        "margin": "24px",
+                        "gutter": "16px",
+                        "xs": "4px"
+                    },
+                    "fontFamily": {
+                        "h2": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "data-display": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-md": ["Inter"],
+                        "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h2": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "data-display": ["28px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "h1": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(30, 30, 30, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        body {
+            background-color: #121212;
+            color: #e2e3dd;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="font-body-md antialiased h-screen flex">
+<!-- Left Sidebar: SideNavBar -->
+<aside class="fixed left-0 top-0 bottom-0 flex flex-col z-50 h-full w-64 border-r border-white/10 bg-[#121212] dark:bg-[#121212] font-inter text-sm antialiased uppercase tracking-wider">
+<div class="p-lg flex flex-col gap-base border-b border-neutral-800 mb-md">
+<div class="text-lg font-black tracking-tighter text-[#8DBA8E]">AGRI-CORE</div>
+<div class="text-[10px] text-neutral-500 font-bold tracking-widest">Precision Risk Management</div>
+</div>
+<nav class="flex-1 px-sm">
+<div id="sidebar-menu">
+  <button
+    type="button"
+    class="nav-btn active w-full flex items-center gap-3 px-4 py-3 transition-colors duration-200 active:scale-95 text-left"
+  >
+    <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+    <span>111111</span>
+  </button>
+
+  <button
+    type="button"
+    class="nav-btn w-full flex items-center gap-3 px-4 py-3 transition-colors duration-200 active:scale-95 text-left"
+  >
+    <span class="material-symbols-outlined" data-icon="satellite_alt">satellite_alt</span>
+    <span>Field Intelligence</span>
+  </button>
+
+  <button
+    type="button"
+    class="nav-btn w-full flex items-center gap-3 px-4 py-3 transition-colors duration-200 active:scale-95 text-left"
+  >
+    <span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+    <span>Sensor Network</span>
+  </button>
+
+  <button
+    type="button"
+    class="nav-btn w-full flex items-center gap-3 px-4 py-3 transition-colors duration-200 active:scale-95 text-left"
+  >
+    <span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+    <span>Reporting</span>
+  </button>
+</div>
+</nav>
+<div class="mt-auto p-md border-t border-neutral-800 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional operator profile avatar for a technical dashboard. The image is a close-up portrait of a person in high-tech agricultural gear, rendered in a crisp, modern digital art style. The lighting is focused and clean, with a neutral and authoritative atmosphere, fitting a dark-themed corporate interface with subtle green accents." src="https://lh3.googleusercontent.com/aida/ADBb0uh0b2A4Wb2P21B1aTuZjIu2L88oLSNQBDVKgStcggwZX9VWqF5d463jfgH7_rBhW0dAu6sTOtoImEdeQJYyFUP4QQ09F5bDfCTLz5nJyeXVPq0O7tKzaAU6fGfu66RRwqGS10MhyWgv4l5JW2J6JNdcztGlatjMm26oYLknLf4N_GdB_WTArrnQafCOlV0htRmCt_TYOBChYGriyAIxssnvKYIkImLe1OUNekbfRpEWNTuFZyN-_bRrVDs"/>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] text-neutral-400 font-bold">OPERATOR ID</span>
+<span class="text-xs text-on-surface">SYS_ADMIN_01</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 flex-1 h-full relative overflow-hidden flex">
+<!-- TopAppBar (Mapped from JSON) -->
+<header class="fixed top-0 right-0 left-64 h-16 flex items-center justify-between px-8 z-40 bg-[#121212]/80 backdrop-blur-md border-b border-white/5 font-inter text-xs font-medium uppercase tracking-widest">
+<div class="flex items-center gap-md">
+<span class="text-xl font-black text-[#8DBA8E]">AGRI-CORE</span>
+<span class="text-neutral-600">|</span>
+<span class="text-neutral-400">Sector 7G - Central Valley</span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-neutral-400 hover:text-[#8DBA8E] cursor-pointer active:opacity-70" data-icon="notifications">notifications</button>
+<button class="material-symbols-outlined text-neutral-400 hover:text-[#8DBA8E] cursor-pointer active:opacity-70" data-icon="settings">settings</button>
+<button class="material-symbols-outlined text-neutral-400 hover:text-[#8DBA8E] cursor-pointer active:opacity-70" data-icon="account_circle">account_circle</button>
+</div>
+</div>
+</header>
+<!-- Central Field View -->
+<section class="flex-1 h-full pt-16 bg-surface-container-lowest relative overflow-hidden">
+<div class="absolute inset-0 w-full h-full">
+<img
+  class="w-full h-full object-cover"
+  src="./env.png"
+/>
+<!-- Overlay Gradient for legibility -->
+<div class="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent opacity-40"></div>
+</div>
+<!-- Contextual Floating Action Button (Only on Home/Dashboard) -->
+</section>
+
+<!-- Right Sidebar: Data Panels -->
+<aside class="w-80 h-full pt-16 bg-[#121212] border-l border-white/10 flex flex-col overflow-y-auto custom-scrollbar">
+<!-- Field Health circular gauge -->
+<div class="p-md border-b border-white/5">
+<h3 class="font-label-caps text-label-caps text-neutral-500 mb-md uppercase">Field Health Score</h3>
+<div class="flex flex-col items-center py-sm">
+<div class="relative w-32 h-32 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-neutral-800" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-dasharray="364.4" stroke-dashoffset="100" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-data-display text-data-display text-on-surface">82</span>
+<span class="text-[10px] font-bold text-primary tracking-widest">OPTIMAL</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Health Score Trend bar chart -->
+<div class="p-md border-b border-white/5">
+<h3 class="font-label-caps text-label-caps text-neutral-500 mb-md uppercase">7-Day Trend</h3>
+<div class="h-32 flex items-end justify-between gap-1 px-base">
+<div class="w-full bg-surface-container-high rounded-t-sm" style="height: 60%"></div>
+<div class="w-full bg-surface-container-high rounded-t-sm" style="height: 75%"></div>
+<div class="w-full bg-surface-container-high rounded-t-sm" style="height: 85%"></div>
+<div class="w-full bg-surface-container-high rounded-t-sm" style="height: 70%"></div>
+<div class="w-full bg-surface-container-high rounded-t-sm" style="height: 65%"></div>
+<div class="w-full bg-primary/40 rounded-t-sm" style="height: 80%"></div>
+<div class="w-full bg-primary rounded-t-sm" style="height: 82%"></div>
+</div>
+<div class="flex justify-between mt-sm text-[9px] text-neutral-600 font-bold">
+<span>MON</span>
+<span>SUN</span>
+</div>
+</div>
+<!-- Critical Thresholds list -->
+<div class="p-md border-b border-white/5">
+<h3 class="font-label-caps text-label-caps text-neutral-500 mb-md uppercase">Critical Thresholds</h3>
+<div class="space-y-sm">
+<div class="p-sm bg-surface-container-low border border-white/5 rounded flex justify-between items-center">
+<div>
+<p class="text-[10px] font-bold text-neutral-400">Salinity Index</p>
+<p class="font-h2 text-h2 text-on-surface">1.4 <span class="text-xs font-normal text-neutral-500">mS/cm</span></p>
+</div>
+<span class="px-xs py-[2px] bg-primary/20 text-primary text-[8px] font-black rounded">STABLE</span>
+</div>
+<div class="p-sm bg-surface-container-low border border-white/5 rounded flex justify-between items-center">
+<div>
+<p class="text-[10px] font-bold text-neutral-400">Moisture Content</p>
+<p class="font-h2 text-h2 text-on-surface">22.8 <span class="text-xs font-normal text-neutral-500">%</span></p>
+</div>
+<span class="px-xs py-[2px] bg-error/20 text-error text-[8px] font-black rounded">CAUTION</span>
+</div>
+</div>
+</div>
+<!-- Automated Recommendations -->
+<div class="p-md">
+<h3 class="font-label-caps text-label-caps text-neutral-500 mb-md uppercase">Core Insights</h3>
+<div class="space-y-sm">
+<div class="p-sm bg-primary/5 border border-primary/20 rounded flex gap-sm">
+<span class="material-symbols-outlined text-primary text-md" data-icon="water_drop">water_drop</span>
+<div>
+<p class="text-[11px] font-bold text-on-surface leading-tight">Increase Irrigation: Zone B</p>
+<p class="text-[10px] text-neutral-400 mt-xs">Moisture level below 24% threshold. Automated cycle suggested for 04:00 UTC.</p>
+</div>
+</div>
+<div class="p-sm bg-surface-container-low border border-white/5 rounded flex gap-sm opacity-60">
+<span class="material-symbols-outlined text-neutral-500 text-md" data-icon="pest_control">pest_control</span>
+<div>
+<p class="text-[11px] font-bold text-on-surface leading-tight">Pest Alert: Sector 4</p>
+<p class="text-[10px] text-neutral-400 mt-xs">Anomaly detected in satellite imagery. Recommend manual field scouting.</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-lg py-md border border-outline-variant text-neutral-400 text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-colors">
+                    View Intelligence Log
+                </button>
+</div>
+</aside>
+</main>
+<style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #121212;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #333532;
+            border-radius: 2px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #8dba8e;
+        }
+</style>
+<script>
+  const buttons = document.querySelectorAll(".nav-btn");
+
+  const activeClasses = [
+    "bg-[#8DBA8E]/10",
+    "text-[#8DBA8E]",
+    "border-r-2",
+    "border-[#8DBA8E]",
+    "font-bold"
+  ];
+
+  const inactiveClasses = [
+    "text-neutral-500",
+    "hover:text-neutral-200",
+    "hover:bg-neutral-900"
+  ];
+
+  function setActiveButton(activeButton) {
+    buttons.forEach((button) => {
+      button.classList.remove(...activeClasses);
+      button.classList.add(...inactiveClasses);
+    });
+
+    activeButton.classList.remove(...inactiveClasses);
+    activeButton.classList.add(...activeClasses);
+  }
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      setActiveButton(button);
+    });
+  });
+
+  setActiveButton(document.querySelector(".nav-btn.active"));
+</script>
+</body></html>
