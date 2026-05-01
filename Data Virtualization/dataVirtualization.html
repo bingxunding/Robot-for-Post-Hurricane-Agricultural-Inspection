@@ -181,18 +181,62 @@
 </div>
 </div>
 </header>
+
 <!-- Central Field View -->
 <section class="flex-1 h-full pt-16 bg-surface-container-lowest relative overflow-hidden">
-<div class="absolute inset-0 w-full h-full">
-<img
-  class="w-full h-full object-cover"
-  src="./env.png"
-/>
-<!-- Overlay Gradient for legibility -->
-<div class="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent opacity-40"></div>
-</div>
-<!-- Contextual Floating Action Button (Only on Home/Dashboard) -->
+
+  <div class="absolute inset-0 w-full h-full">
+
+    <img
+      class="w-full h-full object-cover"
+      src="./env.jpg"
+      alt="Field Map"
+    />
+
+    <svg
+      id="field-overlay"
+      class="absolute inset-0 w-full h-full pointer-events-auto"
+      viewBox="0 0 1000 600"
+      preserveAspectRatio="none"
+    >
+      <defs>
+        <mask id="field-mask">
+          <!-- 整个区域默认会被黑色遮罩覆盖 -->
+          <rect x="0" y="0" width="1000" height="600" fill="white" />
+
+          <!-- 中间农田区域挖空，不被黑色遮罩覆盖 -->
+          <polygon
+            points="89,141 651,90 676,596 457,592 134,280"
+            fill="black"
+          />
+        </mask>
+      </defs>
+
+      <!-- 周围变暗 -->
+      <rect
+        x="0"
+        y="0"
+        width="1000"
+        height="600"
+        fill="rgba(0,0,0,0.5)"
+        mask="url(#field-mask)"
+      />
+
+      <!-- 中间农田区域边界和轻微高亮 -->
+       <!-- fill="rgba(34,197,94,0.15)" -->
+      <polygon
+        id="field-boundary"
+        points="89,141 651,90 676,596 457,592 134,280"
+        fill="transparent"
+        stroke="#ffffff"
+        stroke-width="3"
+      />
+    </svg>
+
+  </div>
+
 </section>
+
 
 <!-- Right Sidebar: Data Panels -->
 <aside class="w-80 h-full pt-16 bg-[#121212] border-l border-white/10 flex flex-col overflow-y-auto custom-scrollbar">
@@ -324,4 +368,35 @@
 
   setActiveButton(document.querySelector(".nav-btn.active"));
 </script>
+
+<!-- print the position -->
+<script>
+  const svg = document.getElementById("field-overlay");
+
+  svg.addEventListener("click", function (event) {
+    const point = svg.createSVGPoint();
+
+    point.x = event.clientX;
+    point.y = event.clientY;
+
+    const svgPoint = point.matrixTransform(svg.getScreenCTM().inverse());
+
+    console.log(
+      `${Math.round(svgPoint.x)},${Math.round(svgPoint.y)}`
+    );
+
+    // 可视化当前点击点，方便你确认
+    const marker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    marker.setAttribute("cx", svgPoint.x);
+    marker.setAttribute("cy", svgPoint.y);
+    marker.setAttribute("r", 5);
+    marker.setAttribute("fill", "red");
+    marker.setAttribute("stroke", "white");
+    marker.setAttribute("stroke-width", "2");
+
+    svg.appendChild(marker);
+  });
+</script>
+
+
 </body></html>
