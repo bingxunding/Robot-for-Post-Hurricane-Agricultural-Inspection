@@ -1,260 +1,285 @@
 <!DOCTYPE html>
 
-<html class="dark" lang="en"><head>
+<html class="dark" lang="en">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+
 <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "secondary": "#c8c6c5",
-                        "inverse-surface": "#e2e3dd",
-                        "inverse-primary": "#3e6842",
-                        "surface-container": "#1e201d",
-                        "primary-fixed": "#bfeebf",
-                        "tertiary-fixed": "#ffd9e1",
-                        "surface-dim": "#121411",
-                        "primary-fixed-dim": "#a4d2a4",
-                        "on-primary-fixed-variant": "#274f2c",
-                        "outline": "#8c9389",
-                        "secondary-fixed-dim": "#c8c6c5",
-                        "on-primary": "#0e3818",
-                        "error-container": "#93000a",
-                        "on-secondary-container": "#b7b5b4",
-                        "error": "#ffb4ab",
-                        "surface-bright": "#373a36",
-                        "on-surface-variant": "#c2c9be",
-                        "on-primary-container": "#224b28",
-                        "secondary-container": "#474746",
-                        "on-secondary-fixed": "#1b1b1c",
-                        "inverse-on-surface": "#2f312e",
-                        "on-tertiary": "#512030",
-                        "surface-container-lowest": "#0c0f0c",
-                        "on-tertiary-fixed-variant": "#6b3647",
-                        "on-tertiary-fixed": "#370b1c",
-                        "tertiary-fixed-dim": "#fcb2c6",
-                        "on-error-container": "#ffdad6",
-                        "tertiary-container": "#e19bae",
-                        "on-tertiary-container": "#653142",
-                        "tertiary": "#ffb6c9",
-                        "on-background": "#e2e3dd",
-                        "surface-variant": "#333532",
-                        "surface": "#121411",
-                        "on-error": "#690005",
-                        "surface-tint": "#a4d2a4",
-                        "surface-container-high": "#282b27",
-                        "primary-container": "#8dba8e",
-                        "primary": "#a8d6a8",
-                        "on-secondary-fixed-variant": "#474746",
-                        "surface-container-highest": "#333532",
-                        "outline-variant": "#424940",
-                        "secondary-fixed": "#e5e2e1",
-                        "background": "#121411",
-                        "on-surface": "#e2e3dd",
-                        "surface-container-low": "#1a1c19",
-                        "on-secondary": "#303030",
-                        "on-primary-fixed": "#002108"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.125rem",
-                        "lg": "0.25rem",
-                        "xl": "0.5rem",
-                        "full": "0.75rem"
-                    },
-                    "spacing": {
-                        "xl": "32px",
-                        "md": "16px",
-                        "lg": "24px",
-                        "base": "4px",
-                        "sm": "8px",
-                        "margin": "24px",
-                        "gutter": "16px",
-                        "xs": "4px"
-                    },
-                    "fontFamily": {
-                        "h2": ["Inter"],
-                        "body-lg": ["Inter"],
-                        "data-display": ["Inter"],
-                        "label-caps": ["Inter"],
-                        "body-md": ["Inter"],
-                        "h1": ["Inter"]
-                    },
-                    "fontSize": {
-                        "h2": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
-                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                        "data-display": ["28px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
-                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
-                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
-                        "h1": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
-                    }
-                },
-            },
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "secondary": "#c8c6c5",
+          "inverse-surface": "#e2e3dd",
+          "inverse-primary": "#3e6842",
+          "surface-container": "#1e201d",
+          "primary-fixed": "#bfeebf",
+          "tertiary-fixed": "#ffd9e1",
+          "surface-dim": "#121411",
+          "primary-fixed-dim": "#a4d2a4",
+          "on-primary-fixed-variant": "#274f2c",
+          "outline": "#8c9389",
+          "secondary-fixed-dim": "#c8c6c5",
+          "on-primary": "#0e3818",
+          "error-container": "#93000a",
+          "on-secondary-container": "#b7b5b4",
+          "error": "#ffb4ab",
+          "surface-bright": "#373a36",
+          "on-surface-variant": "#c2c9be",
+          "on-primary-container": "#224b28",
+          "secondary-container": "#474746",
+          "on-secondary-fixed": "#1b1b1c",
+          "inverse-on-surface": "#2f312e",
+          "on-tertiary": "#512030",
+          "surface-container-lowest": "#0c0f0c",
+          "on-tertiary-fixed-variant": "#6b3647",
+          "on-tertiary-fixed": "#370b1c",
+          "tertiary-fixed-dim": "#fcb2c6",
+          "on-error-container": "#ffdad6",
+          "tertiary-container": "#e19bae",
+          "on-tertiary-container": "#653142",
+          "tertiary": "#ffb6c9",
+          "on-background": "#e2e3dd",
+          "surface-variant": "#333532",
+          "surface": "#121411",
+          "on-error": "#690005",
+          "surface-tint": "#a4d2a4",
+          "surface-container-high": "#282b27",
+          "primary-container": "#8dba8e",
+          "primary": "#a8d6a8",
+          "on-secondary-fixed-variant": "#474746",
+          "surface-container-highest": "#333532",
+          "outline-variant": "#424940",
+          "secondary-fixed": "#e5e2e1",
+          "background": "#121411",
+          "on-surface": "#e2e3dd",
+          "surface-container-low": "#1a1c19",
+          "on-secondary": "#303030",
+          "on-primary-fixed": "#002108"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.125rem",
+          "lg": "0.25rem",
+          "xl": "0.5rem",
+          "full": "0.75rem"
+        },
+        "spacing": {
+          "xl": "32px",
+          "md": "16px",
+          "lg": "24px",
+          "base": "4px",
+          "sm": "8px",
+          "margin": "24px",
+          "gutter": "16px",
+          "xs": "4px"
+        },
+        "fontFamily": {
+          "h2": ["Inter"],
+          "body-lg": ["Inter"],
+          "data-display": ["Inter"],
+          "label-caps": ["Inter"],
+          "body-md": ["Inter"],
+          "h1": ["Inter"]
+        },
+        "fontSize": {
+          "h2": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+          "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+          "data-display": ["28px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+          "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+          "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+          "h1": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
         }
-    </script>
+      },
+    },
+  }
+</script>
+
 <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .glass-panel {
-            background: rgba(30, 30, 30, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        body {
-            background-color: #121212;
-            color: #e2e3dd;
-            overflow: hidden;
-        }
-    </style>
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+
+  .glass-panel {
+    background: rgba(30, 30, 30, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  body {
+    background-color: #121212;
+    color: #e2e3dd;
+    overflow: hidden;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #121212;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #333532;
+    border-radius: 2px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #8dba8e;
+  }
+</style>
 </head>
+
 <body class="font-body-md antialiased h-screen flex">
-<!-- Left Sidebar: SideNavBar -->
+
+<!-- Left Sidebar -->
 <aside class="fixed left-0 top-0 bottom-0 flex flex-col z-50 h-full w-64 border-r border-white/10 bg-[#121212] dark:bg-[#121212] font-inter text-sm antialiased uppercase tracking-wider">
-<div class="p-lg flex flex-col gap-base border-b border-neutral-800 mb-md">
-<div class="text-lg font-black tracking-tighter text-[#8DBA8E]">AGRI-CORE</div>
-<div class="text-[10px] text-neutral-500 font-bold tracking-widest">Precision Risk Management</div>
-</div>
-<nav class="flex-1 px-sm">
-<div id="sidebar-menu">
-  <button
-    type="button"
-    class="nav-btn active w-full flex items-center gap-3 px-4 py-3 transition-colors duration-200 active:scale-95 text-left"
-  >
-    <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-    <span>111111</span>
-  </button>
+  <div class="p-lg flex flex-col gap-base border-b border-neutral-800 mb-md">
+    <div class="text-lg font-black tracking-tighter text-[#8DBA8E]">AGRI-CORE</div>
+    <div class="text-[10px] text-neutral-500 font-bold tracking-widest">Precision Risk Management</div>
+  </div>
 
-  <button
-    type="button"
-    class="nav-btn w-full flex items-center gap-3 px-4 py-3 transition-colors duration-200 active:scale-95 text-left"
-  >
-    <span class="material-symbols-outlined" data-icon="satellite_alt">satellite_alt</span>
-    <span>Field Intelligence</span>
-  </button>
+  <nav class="flex-1 px-sm">
+    <div id="sidebar-menu">
+      <button
+        type="button"
+        class="nav-btn active w-full flex items-center gap-3 px-4 py-3 transition-colors duration-200 active:scale-95 text-left"
+      >
+        <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+        <span>111111</span>
+      </button>
 
-  <button
-    type="button"
-    class="nav-btn w-full flex items-center gap-3 px-4 py-3 transition-colors duration-200 active:scale-95 text-left"
-  >
-    <span class="material-symbols-outlined" data-icon="sensors">sensors</span>
-    <span>Sensor Network</span>
-  </button>
+      <button
+        type="button"
+        class="nav-btn w-full flex items-center gap-3 px-4 py-3 transition-colors duration-200 active:scale-95 text-left"
+      >
+        <span class="material-symbols-outlined" data-icon="satellite_alt">satellite_alt</span>
+        <span>Field Intelligence</span>
+      </button>
 
-  <button
-    type="button"
-    class="nav-btn w-full flex items-center gap-3 px-4 py-3 transition-colors duration-200 active:scale-95 text-left"
-  >
-    <span class="material-symbols-outlined" data-icon="analytics">analytics</span>
-    <span>Reporting</span>
-  </button>
-</div>
-</nav>
-<div class="mt-auto p-md border-t border-neutral-800 flex items-center gap-3">
-<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container border border-outline-variant">
-<img class="w-full h-full object-cover" data-alt="A professional operator profile avatar for a technical dashboard. The image is a close-up portrait of a person in high-tech agricultural gear, rendered in a crisp, modern digital art style. The lighting is focused and clean, with a neutral and authoritative atmosphere, fitting a dark-themed corporate interface with subtle green accents." src="https://lh3.googleusercontent.com/aida/ADBb0uh0b2A4Wb2P21B1aTuZjIu2L88oLSNQBDVKgStcggwZX9VWqF5d463jfgH7_rBhW0dAu6sTOtoImEdeQJYyFUP4QQ09F5bDfCTLz5nJyeXVPq0O7tKzaAU6fGfu66RRwqGS10MhyWgv4l5JW2J6JNdcztGlatjMm26oYLknLf4N_GdB_WTArrnQafCOlV0htRmCt_TYOBChYGriyAIxssnvKYIkImLe1OUNekbfRpEWNTuFZyN-_bRrVDs"/>
-</div>
-<div class="flex flex-col">
-<span class="text-[10px] text-neutral-400 font-bold">OPERATOR ID</span>
-<span class="text-xs text-on-surface">SYS_ADMIN_01</span>
-</div>
-</div>
+      <button
+        type="button"
+        class="nav-btn w-full flex items-center gap-3 px-4 py-3 transition-colors duration-200 active:scale-95 text-left"
+      >
+        <span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+        <span>Sensor Network</span>
+      </button>
+
+      <button
+        type="button"
+        class="nav-btn w-full flex items-center gap-3 px-4 py-3 transition-colors duration-200 active:scale-95 text-left"
+      >
+        <span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+        <span>Reporting</span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="mt-auto p-md border-t border-neutral-800 flex items-center gap-3">
+    <div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container border border-outline-variant">
+      <img
+        class="w-full h-full object-cover"
+        src="https://lh3.googleusercontent.com/aida/ADBb0uh0b2A4Wb2P21B1aTuZjIu2L88oLSNQBDVKgStcggwZX9VWqF5d463jfgH7_rBhW0dAu6sTOtoImEdeQJYyFUP4QQ09F5bDfCTLz5nJyeXVPq0O7tKzaAU6fGfu66RRwqGS10MhyWgv4l5JW2J6JNdcztGlatjMm26oYLknLf4N_GdB_WTArrnQafCOlV0htRmCt_TYOBChYGriyAIxssnvKYIkImLe1OUNekbfRpEWNTuFZyN-_bRrVDs"
+        alt="operator"
+      />
+    </div>
+    <div class="flex flex-col">
+      <span class="text-[10px] text-neutral-400 font-bold">OPERATOR ID</span>
+      <span class="text-xs text-on-surface">SYS_ADMIN_01</span>
+    </div>
+  </div>
 </aside>
+
 <!-- Main Content Area -->
 <main class="ml-64 flex-1 h-full relative overflow-hidden flex">
-<!-- TopAppBar (Mapped from JSON) -->
+
+<!-- TopAppBar -->
 <header class="fixed top-0 right-0 left-64 h-16 flex items-center justify-between px-8 z-40 bg-[#121212]/80 backdrop-blur-md border-b border-white/5 font-inter text-xs font-medium uppercase tracking-widest">
-<div class="flex items-center gap-md">
-<span class="text-xl font-black text-[#8DBA8E]">AGRI-CORE</span>
-<span class="text-neutral-600">|</span>
-<span class="text-neutral-400">Sector 7G - Central Valley</span>
-</div>
-<div class="flex items-center gap-lg">
-<div class="flex items-center gap-md">
-<button class="material-symbols-outlined text-neutral-400 hover:text-[#8DBA8E] cursor-pointer active:opacity-70" data-icon="notifications">notifications</button>
-<button class="material-symbols-outlined text-neutral-400 hover:text-[#8DBA8E] cursor-pointer active:opacity-70" data-icon="settings">settings</button>
-<button class="material-symbols-outlined text-neutral-400 hover:text-[#8DBA8E] cursor-pointer active:opacity-70" data-icon="account_circle">account_circle</button>
-</div>
-</div>
+  <div class="flex items-center gap-md">
+    <span class="text-xl font-black text-[#8DBA8E]">AGRI-CORE</span>
+    <span class="text-neutral-600">|</span>
+    <span class="text-neutral-400">Sector 7G - Central Valley</span>
+  </div>
+
+  <div class="flex items-center gap-lg">
+    <div class="flex items-center gap-md">
+      <button class="material-symbols-outlined text-neutral-400 hover:text-[#8DBA8E] cursor-pointer active:opacity-70" data-icon="notifications">notifications</button>
+      <button class="material-symbols-outlined text-neutral-400 hover:text-[#8DBA8E] cursor-pointer active:opacity-70" data-icon="settings">settings</button>
+      <button class="material-symbols-outlined text-neutral-400 hover:text-[#8DBA8E] cursor-pointer active:opacity-70" data-icon="account_circle">account_circle</button>
+    </div>
+  </div>
 </header>
 
 <!-- Central Field View -->
 <section class="flex-1 h-full pt-16 bg-surface-container-lowest relative overflow-hidden">
-
   <div class="absolute inset-0 w-full h-full">
-
     <img
       class="w-full h-full object-cover"
       src="./env.jpg"
       alt="Field Map"
     />
 
-<svg
-  id="field-overlay"
-  class="absolute inset-0 w-full h-full pointer-events-auto"
-  viewBox="0 0 1000 600"
-  preserveAspectRatio="none"
->
-  <defs>
-    <mask id="field-mask">
+    <svg
+      id="field-overlay"
+      class="absolute inset-0 w-full h-full pointer-events-auto"
+      viewBox="0 0 1000 600"
+      preserveAspectRatio="none"
+    >
+      <defs>
+        <mask id="field-mask">
+          <rect
+            x="0"
+            y="0"
+            width="1000"
+            height="600"
+            fill="white"
+          />
+
+          <polygon
+            points="89,141 651,90 676,596 457,592 134,280"
+            fill="black"
+          />
+        </mask>
+      </defs>
+
       <rect
         x="0"
         y="0"
         width="1000"
         height="600"
-        fill="white"
+        fill="rgba(0,0,0,0.5)"
+        mask="url(#field-mask)"
+        pointer-events="none"
       />
+
+      <g
+        id="grid-lines"
+        pointer-events="none"
+      ></g>
+
+      <g
+        id="sampling-points"
+        pointer-events="auto"
+      ></g>
 
       <polygon
+        id="field-boundary"
         points="89,141 651,90 676,596 457,592 134,280"
-        fill="black"
+        fill="transparent"
+        stroke="#ffffff"
+        stroke-width="3"
+        pointer-events="none"
       />
-    </mask>
-  </defs>
-
-  <!-- 周围变暗：不接收点击事件 -->
-  <rect
-    x="0"
-    y="0"
-    width="1000"
-    height="600"
-    fill="rgba(0,0,0,0.5)"
-    mask="url(#field-mask)"
-    pointer-events="none"
-  />
-
-  <!-- 采样点之间的连接线：不接收点击事件 -->
-  <g
-    id="grid-lines"
-    pointer-events="none"
-  ></g>
-
-  <!-- 采样点：允许点击 -->
-  <g
-    id="sampling-points"
-    pointer-events="auto"
-  ></g>
-
-  <!-- 农田边界：不接收点击事件，避免挡住采样点 -->
-  <polygon
-    id="field-boundary"
-    points="89,141 651,90 676,596 457,592 134,280"
-    fill="transparent"
-    stroke="#ffffff"
-    stroke-width="3"
-    pointer-events="none"
-  />
-</svg>
-
+    </svg>
   </div>
-
 </section>
 
-<!-- Right Sidebar: Data Panels -->
+<!-- Right Sidebar -->
 <aside class="w-80 h-full pt-16 bg-[#121212] border-l border-white/10 flex flex-col overflow-y-auto custom-scrollbar">
 
   <!-- Selected Zone Details -->
@@ -301,7 +326,7 @@
         </div>
 
         <div class="p-sm bg-black/20 border border-white/5 rounded">
-          <p class="text-[10px] font-bold text-neutral-400">PH</p>
+          <p class="text-[10px] font-bold text-neutral-400">pH</p>
           <p class="font-h2 text-h2 text-on-surface">
             <span id="phId">-</span>
           </p>
@@ -369,7 +394,7 @@
     </div>
   </div>
 
-  <!-- Health Score Trend bar chart -->
+  <!-- Health Score Trend -->
   <div class="p-md border-b border-white/5">
     <h3 class="font-label-caps text-label-caps text-neutral-500 mb-md uppercase">
       7-Day Trend
@@ -400,10 +425,10 @@
     <div class="space-y-sm">
       <div class="p-sm bg-surface-container-low border border-white/5 rounded flex justify-between items-center">
         <div>
-          <p class="text-[10px] font-bold text-neutral-400">Salinity Index</p>
+          <p class="text-[10px] font-bold text-neutral-400">ECe</p>
           <p class="font-h2 text-h2 text-on-surface">
             <span id="threshold-salinity">1.4</span>
-            <span class="text-xs font-normal text-neutral-500">mS/cm</span>
+            <span class="text-xs font-normal text-neutral-500">dS/m</span>
           </p>
         </div>
 
@@ -434,10 +459,9 @@
 
       <div class="p-sm bg-surface-container-low border border-white/5 rounded flex justify-between items-center">
         <div>
-          <p class="text-[10px] font-bold text-neutral-400">Compaction</p>
+          <p class="text-[10px] font-bold text-neutral-400">pH</p>
           <p class="font-h2 text-h2 text-on-surface">
-            <span id="threshold-compaction">310</span>
-            <span class="text-xs font-normal text-neutral-500">psi</span>
+            <span id="threshold-compaction">7.2</span>
           </p>
         </div>
 
@@ -510,23 +534,10 @@
   </div>
 </aside>
 </main>
-<style>
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #121212;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #333532;
-            border-radius: 2px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #8dba8e;
-        }
-</style>
+
 <script>
   const buttons = document.querySelectorAll(".nav-btn");
+
   const activeClasses = [
     "bg-[#8DBA8E]/10",
     "text-[#8DBA8E]",
@@ -679,12 +690,40 @@
     return Number((Math.random() * (max - min) + min).toFixed(decimals));
   }
 
-  function getPointStatus(soilMoisture, salinity, compaction) {
-    if (soilMoisture < 15 || salinity > 4.5 || compaction > 420) {
+  function getPointStatus(soilMoisture, temperature, ece, ph) {
+    const moistureStatus =
+      soilMoisture < 10 || soilMoisture > 60
+        ? "Danger"
+        : soilMoisture < 20 || soilMoisture > 40
+          ? "Caution"
+          : "Safe";
+
+    const temperatureStatus =
+      temperature < 5 || temperature > 32
+        ? "Danger"
+        : temperature < 18 || temperature > 26
+          ? "Caution"
+          : "Safe";
+
+    const eceStatus =
+      ece > 4
+        ? "Danger"
+        : ece > 2
+          ? "Caution"
+          : "Safe";
+
+    const phStatus =
+      ph < 4.5 || ph > 9.0
+        ? "Danger"
+        : ph < 6.5 || ph > 8.4
+          ? "Caution"
+          : "Safe";
+
+    if ([moistureStatus, temperatureStatus, eceStatus, phStatus].includes("Danger")) {
       return "Danger";
     }
 
-    if (soilMoisture < 22 || salinity > 3.2 || compaction > 330) {
+    if ([moistureStatus, temperatureStatus, eceStatus, phStatus].includes("Caution")) {
       return "Caution";
     }
 
@@ -703,80 +742,73 @@
     return "#ef4444";
   }
 
-  function calculateHealthScore(soilMoisture, salinity, compaction) {
+  function calculateHealthScore(soilMoisture, temperature, ece, ph) {
     let score = 100;
 
-    if (soilMoisture < 20) {
-      score -= (20 - soilMoisture) * 2;
+    const status = getPointStatus(soilMoisture, temperature, ece, ph);
+
+    if (status === "Danger") {
+      score -= 35;
+    } else if (status === "Caution") {
+      score -= 18;
     }
 
-    if (salinity > 2.5) {
-      score -= (salinity - 2.5) * 8;
-    }
-
-    if (compaction > 280) {
-      score -= (compaction - 280) * 0.08;
-    }
+    if (soilMoisture < 20 || soilMoisture > 40) score -= 8;
+    if (temperature < 18 || temperature > 26) score -= 8;
+    if (ece > 2) score -= 8;
+    if (ph < 6.5 || ph > 8.4) score -= 8;
 
     return Math.max(0, Math.min(100, Math.round(score)));
   }
 
-  function getRecommendation(status, soilMoisture, salinity, compaction) {
+  function getRecommendation(status, soilMoisture, temperature, ece, ph) {
     if (status === "Safe") {
-      return "No urgent action required. Continue regular monitoring.";
+      return "All measured parameters are within the safe range. Continue regular monitoring.";
     }
 
-    if (status === "Caution") {
-      if (soilMoisture < 22) {
-        return "Moisture is slightly low. Consider moderate irrigation and re-check in 3–5 days.";
-      }
-
-      if (salinity > 3.2) {
-        return "Salinity is above the caution level. Consider leaching with irrigation.";
-      }
-
-      if (compaction > 330) {
-        return "Soil compaction is increasing. Reduce heavy vehicle traffic in this zone.";
-      }
-
-      return "Condition requires attention. Monitor this area more frequently.";
+    if (soilMoisture < 10 || soilMoisture > 60) {
+      return "Soil moisture is in the danger range. Adjust irrigation strategy and re-check this zone.";
     }
 
-    if (soilMoisture < 15) {
-      return "Soil moisture is critically low. Apply irrigation as soon as possible.";
+    if (temperature < 5 || temperature > 32) {
+      return "Temperature is in the danger range. Increase monitoring and avoid stress-sensitive operations.";
     }
 
-    if (salinity > 4.5) {
-      return "Salinity is critically high. Leach the soil and avoid salt-sensitive crops.";
+    if (ece > 4) {
+      return "ECe is high. Consider leaching, drainage improvement, or salt-tolerant crop management.";
     }
 
-    if (compaction > 420) {
-      return "Compaction is critically high. Aeration or deep tillage may be required.";
+    if (ph < 4.5 || ph > 9.0) {
+      return "pH is outside the acceptable range. Soil amendment may be required before planting.";
     }
 
-    return "High-risk zone detected. Inspect this area manually.";
+    return "One or more parameters are in the warning range. Monitor this zone more frequently.";
   }
 
   function createSamplingPoint(x, y, index) {
-    const soilMoisture = randomBetween(10, 38, 1);
-    const salinity = randomBetween(1.0, 5.5, 1);
-    const compaction = randomBetween(180, 480, 0);
+    const soilMoisture = randomBetween(5, 65, 1);
+    const temperature = randomBetween(2, 36, 1);
+    const ece = randomBetween(0.2, 8.5, 1);
+    const ph = randomBetween(3.8, 9.5, 1);
 
-    const status = getPointStatus(soilMoisture, salinity, compaction);
-    const healthScore = calculateHealthScore(soilMoisture, salinity, compaction);
+    const status = getPointStatus(soilMoisture, temperature, ece, ph);
+    const healthScore = calculateHealthScore(soilMoisture, temperature, ece, ph);
 
     return {
       id: `N-${index}`,
       x,
       y,
       type: "inner",
+
       soilMoisture,
-      salinity,
-      compaction,
+      temperature,
+      ece,
+      ph,
+
       status,
       statusColor: getStatusColorByStatus(status),
       healthScore,
-      recommendation: getRecommendation(status, soilMoisture, salinity, compaction)
+      recommendation: getRecommendation(status, soilMoisture, temperature, ece, ph)
     };
   }
 
@@ -941,8 +973,6 @@
       circle.addEventListener("click", function (event) {
         event.stopPropagation();
 
-        console.log("Clicked sampling point:", point);
-
         updateRightPanel(point);
         highlightSelectedPoint(circle);
       });
@@ -972,9 +1002,9 @@
     const zoneStatusEl = document.getElementById("zone-status");
 
     const soilMoistureEl = document.getElementById("soil-moisture");
-    const salinityIndexEl = document.getElementById("temperatureId");
-    const compactionEl = document.getElementById("eceId");
-    const healthScoreEl = document.getElementById("phId");
+    const temperatureEl = document.getElementById("temperatureId");
+    const eceEl = document.getElementById("eceId");
+    const phEl = document.getElementById("phId");
     const recommendationEl = document.getElementById("recommendation");
 
     const fieldHealthScoreEl = document.getElementById("field-health-score");
@@ -1010,9 +1040,10 @@
     }
 
     if (soilMoistureEl) soilMoistureEl.textContent = `${point.soilMoisture}%`;
-    if (salinityIndexEl) salinityIndexEl.textContent = `${point.salinity} mS/cm`;
-    if (compactionEl) compactionEl.textContent = `${point.compaction} psi`;
-    if (healthScoreEl) healthScoreEl.textContent = point.healthScore;
+    if (temperatureEl) temperatureEl.textContent = `${point.temperature} °C`;
+    if (eceEl) eceEl.textContent = `${point.ece} dS/m`;
+    if (phEl) phEl.textContent = point.ph;
+
     if (recommendationEl) recommendationEl.textContent = point.recommendation;
 
     if (fieldHealthScoreEl) {
@@ -1042,23 +1073,31 @@
       trendCurrentBarEl.style.height = `${point.healthScore}%`;
     }
 
-    if (thresholdSalinityEl) thresholdSalinityEl.textContent = point.salinity;
+    if (thresholdSalinityEl) thresholdSalinityEl.textContent = point.ece;
     if (thresholdMoistureEl) thresholdMoistureEl.textContent = point.soilMoisture;
-    if (thresholdCompactionEl) thresholdCompactionEl.textContent = point.compaction;
+    if (thresholdCompactionEl) thresholdCompactionEl.textContent = point.ph;
 
     updateBadge(
       salinityBadgeEl,
-      point.salinity > 4.5 ? "DANGER" : point.salinity > 3.2 ? "CAUTION" : "STABLE"
+      point.ece > 4 ? "DANGER" : point.ece > 2 ? "CAUTION" : "STABLE"
     );
 
     updateBadge(
       moistureBadgeEl,
-      point.soilMoisture < 15 ? "DANGER" : point.soilMoisture < 22 ? "CAUTION" : "STABLE"
+      point.soilMoisture < 10 || point.soilMoisture > 60
+        ? "DANGER"
+        : point.soilMoisture < 20 || point.soilMoisture > 40
+          ? "CAUTION"
+          : "STABLE"
     );
 
     updateBadge(
       compactionBadgeEl,
-      point.compaction > 420 ? "DANGER" : point.compaction > 330 ? "CAUTION" : "STABLE"
+      point.ph < 4.5 || point.ph > 9.0
+        ? "DANGER"
+        : point.ph < 6.5 || point.ph > 8.4
+          ? "CAUTION"
+          : "STABLE"
     );
 
     if (mainInsightTitleEl) {
@@ -1100,6 +1139,7 @@
       element.classList.add("bg-error/20", "text-error");
     }
   }
+
   generateSamplingGrid();
 </script>
 
