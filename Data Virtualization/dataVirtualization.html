@@ -193,129 +193,307 @@
       alt="Field Map"
     />
 
-    <svg
-      id="field-overlay"
-      class="absolute inset-0 w-full h-full pointer-events-auto"
-      viewBox="0 0 1000 600"
-      preserveAspectRatio="none"
-    >
-      <defs>
-        <mask id="field-mask">
-          <!-- 整个区域默认会被黑色遮罩覆盖 -->
-          <rect x="0" y="0" width="1000" height="600" fill="white" />
+<svg
+  id="field-overlay"
+  class="absolute inset-0 w-full h-full pointer-events-auto"
+  viewBox="0 0 1000 600"
+  preserveAspectRatio="none"
+>
+  <defs>
+    <mask id="field-mask">
+      <rect x="0" y="0" width="1000" height="600" fill="white" />
 
-          <!-- 中间农田区域挖空，不被黑色遮罩覆盖 -->
-          <polygon
-            points="89,141 651,90 676,596 457,592 134,280"
-            fill="black"
-          />
-        </mask>
-      </defs>
-
-      <!-- 周围变暗 -->
-      <rect
-        x="0"
-        y="0"
-        width="1000"
-        height="600"
-        fill="rgba(0,0,0,0.5)"
-        mask="url(#field-mask)"
-      />
-
-      <!-- 中间农田区域边界和轻微高亮 -->
-       <!-- fill="rgba(34,197,94,0.15)" -->
       <polygon
-        id="field-boundary"
         points="89,141 651,90 676,596 457,592 134,280"
-        fill="transparent"
-        stroke="#ffffff"
-        stroke-width="3"
+        fill="black"
       />
-    </svg>
+    </mask>
+  </defs>
+
+  <!-- 周围变暗 -->
+  <rect
+    x="0"
+    y="0"
+    width="1000"
+    height="600"
+    fill="rgba(0,0,0,0.5)"
+    mask="url(#field-mask)"
+  />
+
+  <!-- 采样点之间的连接线 -->
+  <g id="grid-lines"></g>
+
+  <!-- 采样点 -->
+  <g id="sampling-points"></g>
+
+  <!-- 农田边界 -->
+  <polygon
+    id="field-boundary"
+    points="89,141 651,90 676,596 457,592 134,280"
+    fill="transparent"
+    stroke="#ffffff"
+    stroke-width="3"
+  />
+</svg>
 
   </div>
 
 </section>
 
-
 <!-- Right Sidebar: Data Panels -->
 <aside class="w-80 h-full pt-16 bg-[#121212] border-l border-white/10 flex flex-col overflow-y-auto custom-scrollbar">
-<!-- Field Health circular gauge -->
-<div class="p-md border-b border-white/5">
-<h3 class="font-label-caps text-label-caps text-neutral-500 mb-md uppercase">Field Health Score</h3>
-<div class="flex flex-col items-center py-sm">
-<div class="relative w-32 h-32 flex items-center justify-center">
-<svg class="w-full h-full transform -rotate-90">
-<circle class="text-neutral-800" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-width="8"></circle>
-<circle class="text-primary" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-dasharray="364.4" stroke-dashoffset="100" stroke-width="8"></circle>
-</svg>
-<div class="absolute inset-0 flex flex-col items-center justify-center">
-<span class="font-data-display text-data-display text-on-surface">82</span>
-<span class="text-[10px] font-bold text-primary tracking-widest">OPTIMAL</span>
-</div>
-</div>
-</div>
-</div>
-<!-- Health Score Trend bar chart -->
-<div class="p-md border-b border-white/5">
-<h3 class="font-label-caps text-label-caps text-neutral-500 mb-md uppercase">7-Day Trend</h3>
-<div class="h-32 flex items-end justify-between gap-1 px-base">
-<div class="w-full bg-surface-container-high rounded-t-sm" style="height: 60%"></div>
-<div class="w-full bg-surface-container-high rounded-t-sm" style="height: 75%"></div>
-<div class="w-full bg-surface-container-high rounded-t-sm" style="height: 85%"></div>
-<div class="w-full bg-surface-container-high rounded-t-sm" style="height: 70%"></div>
-<div class="w-full bg-surface-container-high rounded-t-sm" style="height: 65%"></div>
-<div class="w-full bg-primary/40 rounded-t-sm" style="height: 80%"></div>
-<div class="w-full bg-primary rounded-t-sm" style="height: 82%"></div>
-</div>
-<div class="flex justify-between mt-sm text-[9px] text-neutral-600 font-bold">
-<span>MON</span>
-<span>SUN</span>
-</div>
-</div>
-<!-- Critical Thresholds list -->
-<div class="p-md border-b border-white/5">
-<h3 class="font-label-caps text-label-caps text-neutral-500 mb-md uppercase">Critical Thresholds</h3>
-<div class="space-y-sm">
-<div class="p-sm bg-surface-container-low border border-white/5 rounded flex justify-between items-center">
-<div>
-<p class="text-[10px] font-bold text-neutral-400">Salinity Index</p>
-<p class="font-h2 text-h2 text-on-surface">1.4 <span class="text-xs font-normal text-neutral-500">mS/cm</span></p>
-</div>
-<span class="px-xs py-[2px] bg-primary/20 text-primary text-[8px] font-black rounded">STABLE</span>
-</div>
-<div class="p-sm bg-surface-container-low border border-white/5 rounded flex justify-between items-center">
-<div>
-<p class="text-[10px] font-bold text-neutral-400">Moisture Content</p>
-<p class="font-h2 text-h2 text-on-surface">22.8 <span class="text-xs font-normal text-neutral-500">%</span></p>
-</div>
-<span class="px-xs py-[2px] bg-error/20 text-error text-[8px] font-black rounded">CAUTION</span>
-</div>
-</div>
-</div>
-<!-- Automated Recommendations -->
-<div class="p-md">
-<h3 class="font-label-caps text-label-caps text-neutral-500 mb-md uppercase">Core Insights</h3>
-<div class="space-y-sm">
-<div class="p-sm bg-primary/5 border border-primary/20 rounded flex gap-sm">
-<span class="material-symbols-outlined text-primary text-md" data-icon="water_drop">water_drop</span>
-<div>
-<p class="text-[11px] font-bold text-on-surface leading-tight">Increase Irrigation: Zone B</p>
-<p class="text-[10px] text-neutral-400 mt-xs">Moisture level below 24% threshold. Automated cycle suggested for 04:00 UTC.</p>
-</div>
-</div>
-<div class="p-sm bg-surface-container-low border border-white/5 rounded flex gap-sm opacity-60">
-<span class="material-symbols-outlined text-neutral-500 text-md" data-icon="pest_control">pest_control</span>
-<div>
-<p class="text-[11px] font-bold text-on-surface leading-tight">Pest Alert: Sector 4</p>
-<p class="text-[10px] text-neutral-400 mt-xs">Anomaly detected in satellite imagery. Recommend manual field scouting.</p>
-</div>
-</div>
-</div>
-<button class="w-full mt-lg py-md border border-outline-variant text-neutral-400 text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-colors">
-                    View Intelligence Log
-                </button>
-</div>
+
+  <!-- Selected Zone Details -->
+  <div class="p-md border-b border-white/5">
+    <h3 class="font-label-caps text-label-caps text-neutral-500 mb-md uppercase">
+      Selected Zone
+    </h3>
+
+    <div class="p-sm bg-surface-container-low border border-white/5 rounded">
+      <div class="flex justify-between items-center mb-sm">
+        <div>
+          <p class="text-[10px] font-bold text-neutral-400">Zone ID</p>
+          <p id="zone-id" class="font-h2 text-h2 text-on-surface">-</p>
+        </div>
+
+        <span
+          id="zone-status"
+          class="px-xs py-[2px] bg-primary/20 text-primary text-[8px] font-black rounded uppercase"
+        >
+          -
+        </span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-sm mt-sm">
+        <div class="p-sm bg-black/20 border border-white/5 rounded">
+          <p class="text-[10px] font-bold text-neutral-400">Soil Moisture</p>
+          <p class="font-h2 text-h2 text-on-surface">
+            <span id="soil-moisture">-</span>
+          </p>
+        </div>
+
+        <div class="p-sm bg-black/20 border border-white/5 rounded">
+          <p class="text-[10px] font-bold text-neutral-400">Salinity</p>
+          <p class="font-h2 text-h2 text-on-surface">
+            <span id="salinity-index">-</span>
+          </p>
+        </div>
+
+        <div class="p-sm bg-black/20 border border-white/5 rounded">
+          <p class="text-[10px] font-bold text-neutral-400">Compaction</p>
+          <p class="font-h2 text-h2 text-on-surface">
+            <span id="compaction">-</span>
+          </p>
+        </div>
+
+        <div class="p-sm bg-black/20 border border-white/5 rounded">
+          <p class="text-[10px] font-bold text-neutral-400">Health Score</p>
+          <p class="font-h2 text-h2 text-on-surface">
+            <span id="point-health-score">-</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-sm pt-sm border-t border-white/5">
+        <p class="text-[10px] font-bold text-neutral-400 mb-xs">Recommendation</p>
+        <p id="recommendation" class="text-[10px] text-neutral-400 leading-snug">
+          Select a sampling point to view details.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Field Health circular gauge -->
+  <div class="p-md border-b border-white/5">
+    <h3 class="font-label-caps text-label-caps text-neutral-500 mb-md uppercase">
+      Field Health Score
+    </h3>
+
+    <div class="flex flex-col items-center py-sm">
+      <div class="relative w-32 h-32 flex items-center justify-center">
+        <svg class="w-full h-full transform -rotate-90">
+          <circle
+            class="text-neutral-800"
+            cx="64"
+            cy="64"
+            fill="transparent"
+            r="58"
+            stroke="currentColor"
+            stroke-width="8"
+          ></circle>
+
+          <circle
+            id="health-score-ring"
+            class="text-primary"
+            cx="64"
+            cy="64"
+            fill="transparent"
+            r="58"
+            stroke="currentColor"
+            stroke-dasharray="364.4"
+            stroke-dashoffset="100"
+            stroke-width="8"
+          ></circle>
+        </svg>
+
+        <div class="absolute inset-0 flex flex-col items-center justify-center">
+          <span
+            id="field-health-score"
+            class="font-data-display text-data-display text-on-surface"
+          >
+            82
+          </span>
+
+          <span
+            id="field-health-label"
+            class="text-[10px] font-bold text-primary tracking-widest"
+          >
+            OPTIMAL
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Health Score Trend bar chart -->
+  <div class="p-md border-b border-white/5">
+    <h3 class="font-label-caps text-label-caps text-neutral-500 mb-md uppercase">
+      7-Day Trend
+    </h3>
+
+    <div class="h-32 flex items-end justify-between gap-1 px-base">
+      <div class="w-full bg-surface-container-high rounded-t-sm" style="height: 60%"></div>
+      <div class="w-full bg-surface-container-high rounded-t-sm" style="height: 75%"></div>
+      <div class="w-full bg-surface-container-high rounded-t-sm" style="height: 85%"></div>
+      <div class="w-full bg-surface-container-high rounded-t-sm" style="height: 70%"></div>
+      <div class="w-full bg-surface-container-high rounded-t-sm" style="height: 65%"></div>
+      <div class="w-full bg-primary/40 rounded-t-sm" style="height: 80%"></div>
+      <div id="trend-current-bar" class="w-full bg-primary rounded-t-sm" style="height: 82%"></div>
+    </div>
+
+    <div class="flex justify-between mt-sm text-[9px] text-neutral-600 font-bold">
+      <span>MON</span>
+      <span>SUN</span>
+    </div>
+  </div>
+
+  <!-- Critical Thresholds list -->
+  <div class="p-md border-b border-white/5">
+    <h3 class="font-label-caps text-label-caps text-neutral-500 mb-md uppercase">
+      Critical Thresholds
+    </h3>
+
+    <div class="space-y-sm">
+      <div class="p-sm bg-surface-container-low border border-white/5 rounded flex justify-between items-center">
+        <div>
+          <p class="text-[10px] font-bold text-neutral-400">Salinity Index</p>
+          <p class="font-h2 text-h2 text-on-surface">
+            <span id="threshold-salinity">1.4</span>
+            <span class="text-xs font-normal text-neutral-500">mS/cm</span>
+          </p>
+        </div>
+
+        <span
+          id="salinity-status-badge"
+          class="px-xs py-[2px] bg-primary/20 text-primary text-[8px] font-black rounded"
+        >
+          STABLE
+        </span>
+      </div>
+
+      <div class="p-sm bg-surface-container-low border border-white/5 rounded flex justify-between items-center">
+        <div>
+          <p class="text-[10px] font-bold text-neutral-400">Moisture Content</p>
+          <p class="font-h2 text-h2 text-on-surface">
+            <span id="threshold-moisture">22.8</span>
+            <span class="text-xs font-normal text-neutral-500">%</span>
+          </p>
+        </div>
+
+        <span
+          id="moisture-status-badge"
+          class="px-xs py-[2px] bg-error/20 text-error text-[8px] font-black rounded"
+        >
+          CAUTION
+        </span>
+      </div>
+
+      <div class="p-sm bg-surface-container-low border border-white/5 rounded flex justify-between items-center">
+        <div>
+          <p class="text-[10px] font-bold text-neutral-400">Compaction</p>
+          <p class="font-h2 text-h2 text-on-surface">
+            <span id="threshold-compaction">310</span>
+            <span class="text-xs font-normal text-neutral-500">psi</span>
+          </p>
+        </div>
+
+        <span
+          id="compaction-status-badge"
+          class="px-xs py-[2px] bg-primary/20 text-primary text-[8px] font-black rounded"
+        >
+          STABLE
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Automated Recommendations -->
+  <div class="p-md">
+    <h3 class="font-label-caps text-label-caps text-neutral-500 mb-md uppercase">
+      Core Insights
+    </h3>
+
+    <div class="space-y-sm">
+      <div class="p-sm bg-primary/5 border border-primary/20 rounded flex gap-sm">
+        <span
+          id="main-insight-icon"
+          class="material-symbols-outlined text-primary text-md"
+          data-icon="water_drop"
+        >
+          water_drop
+        </span>
+
+        <div>
+          <p
+            id="main-insight-title"
+            class="text-[11px] font-bold text-on-surface leading-tight"
+          >
+            Select a Zone
+          </p>
+
+          <p
+            id="main-insight-description"
+            class="text-[10px] text-neutral-400 mt-xs"
+          >
+            Click a sampling point on the field map to load sensor data and recommendations.
+          </p>
+        </div>
+      </div>
+
+      <div class="p-sm bg-surface-container-low border border-white/5 rounded flex gap-sm opacity-60">
+        <span
+          class="material-symbols-outlined text-neutral-500 text-md"
+          data-icon="pest_control"
+        >
+          pest_control
+        </span>
+
+        <div>
+          <p class="text-[11px] font-bold text-on-surface leading-tight">
+            Pest Alert: Sector 4
+          </p>
+
+          <p class="text-[10px] text-neutral-400 mt-xs">
+            Anomaly detected in satellite imagery. Recommend manual field scouting.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <button class="w-full mt-lg py-md border border-outline-variant text-neutral-400 text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-colors">
+      View Intelligence Log
+    </button>
+  </div>
 </aside>
 </main>
 <style>
@@ -335,7 +513,6 @@
 </style>
 <script>
   const buttons = document.querySelectorAll(".nav-btn");
-
   const activeClasses = [
     "bg-[#8DBA8E]/10",
     "text-[#8DBA8E]",
@@ -369,7 +546,7 @@
   setActiveButton(document.querySelector(".nav-btn.active"));
 </script>
 
-<!-- print the position -->
+<!-- print the position 
 <script>
   const svg = document.getElementById("field-overlay");
 
@@ -381,11 +558,9 @@
 
     const svgPoint = point.matrixTransform(svg.getScreenCTM().inverse());
 
-    console.log(
-      `${Math.round(svgPoint.x)},${Math.round(svgPoint.y)}`
-    );
+    console.log(`${Math.round(svgPoint.x)},${Math.round(svgPoint.y)}`);
 
-    // 可视化当前点击点，方便你确认
+    // 可视化当前点击点，方便你确认坐标
     const marker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     marker.setAttribute("cx", svgPoint.x);
     marker.setAttribute("cy", svgPoint.y);
@@ -397,6 +572,278 @@
     svg.appendChild(marker);
   });
 </script>
+-->
+<script>
+  const polygonPoints = [
+    { x: 89, y: 141 },
+    { x: 651, y: 90 },
+    { x: 676, y: 596 },
+    { x: 457, y: 592 },
+    { x: 134, y: 280 }
+  ];
 
+  const spacing = 35;          // 采样点间距，数值越小点越密
+  const pointRadius = 4;       // 内部采样点大小
+  const boundaryPadding = 12;  // 距离边界小于这个值的内部点不绘制
 
-</body></html>
+  const gridLinesGroup = document.getElementById("grid-lines");
+  const samplingPointsGroup = document.getElementById("sampling-points");
+
+  function isPointInsidePolygon(point, polygon) {
+    let inside = false;
+
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+      const xi = polygon[i].x;
+      const yi = polygon[i].y;
+      const xj = polygon[j].x;
+      const yj = polygon[j].y;
+
+      const intersect =
+        yi > point.y !== yj > point.y &&
+        point.x < ((xj - xi) * (point.y - yi)) / (yj - yi) + xi;
+
+      if (intersect) inside = !inside;
+    }
+
+    return inside;
+  }
+
+  function getStatusColor() {
+    const random = Math.random();
+
+    if (random < 0.65) {
+      return "#66d14f"; // Safe - green
+    } else if (random < 0.88) {
+      return "#facc15"; // Caution - yellow
+    } else {
+      return "#ef4444"; // Danger - red
+    }
+  }
+
+  function createSvgElement(tag) {
+    return document.createElementNS("http://www.w3.org/2000/svg", tag);
+  }
+
+  function distanceBetweenPoints(a, b) {
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  function getClosestPointOnSegment(point, a, b) {
+    const abX = b.x - a.x;
+    const abY = b.y - a.y;
+
+    const apX = point.x - a.x;
+    const apY = point.y - a.y;
+
+    const abLengthSquared = abX * abX + abY * abY;
+
+    if (abLengthSquared === 0) {
+      return { x: a.x, y: a.y };
+    }
+
+    let t = (apX * abX + apY * abY) / abLengthSquared;
+
+    // 限制投影点必须在线段内部
+    t = Math.max(0, Math.min(1, t));
+
+    return {
+      x: a.x + t * abX,
+      y: a.y + t * abY
+    };
+  }
+
+  function getDistanceToPolygonBoundary(point, polygon) {
+    let minDistance = Infinity;
+
+    for (let i = 0; i < polygon.length; i++) {
+      const a = polygon[i];
+      const b = polygon[(i + 1) % polygon.length];
+
+      const closestPoint = getClosestPointOnSegment(point, a, b);
+      const distance = distanceBetweenPoints(point, closestPoint);
+
+      if (distance < minDistance) {
+        minDistance = distance;
+      }
+    }
+
+    return minDistance;
+  }
+
+  function generateSamplingGrid() {
+    const minX = Math.min(...polygonPoints.map(p => p.x));
+    const maxX = Math.max(...polygonPoints.map(p => p.x));
+    const minY = Math.min(...polygonPoints.map(p => p.y));
+    const maxY = Math.max(...polygonPoints.map(p => p.y));
+
+    const grid = [];
+
+    for (let y = minY; y <= maxY; y += spacing) {
+      const row = [];
+
+      for (let x = minX; x <= maxX; x += spacing) {
+        const point = { x, y };
+
+        const isInside = isPointInsidePolygon(point, polygonPoints);
+        const distanceToBoundary = getDistanceToPolygonBoundary(point, polygonPoints);
+
+        if (isInside && distanceToBoundary > boundaryPadding) {
+          row.push({
+            x,
+            y,
+            type: "inner",
+            statusColor: getStatusColor()
+          });
+        } else {
+          row.push(null);
+        }
+      }
+
+      grid.push(row);
+    }
+
+    const boundaryPoints = generateBoundaryPoints();
+
+    drawGridLines(grid, boundaryPoints);
+    drawSamplingPoints(grid, boundaryPoints);
+  }
+
+  function generateBoundaryPoints() {
+    const boundaryPoints = [];
+
+    for (let i = 0; i < polygonPoints.length; i++) {
+      const start = polygonPoints[i];
+      const end = polygonPoints[(i + 1) % polygonPoints.length];
+
+      const edgeLength = distanceBetweenPoints(start, end);
+
+      // 每条边上生成若干个点
+      const count = Math.max(1, Math.floor(edgeLength / spacing));
+
+      for (let j = 0; j <= count; j++) {
+        const t = j / count;
+
+        boundaryPoints.push({
+          x: start.x + (end.x - start.x) * t,
+          y: start.y + (end.y - start.y) * t,
+          type: "boundary",
+          statusColor: "#ffffff"
+        });
+      }
+    }
+
+    return boundaryPoints;
+  }
+
+  function drawGridLines(grid, boundaryPoints) {
+    gridLinesGroup.innerHTML = "";
+
+    const allInnerPoints = [];
+
+    // 1. 内部采样点之间的横向、纵向连接
+    for (let rowIndex = 0; rowIndex < grid.length; rowIndex++) {
+      for (let colIndex = 0; colIndex < grid[rowIndex].length; colIndex++) {
+        const currentPoint = grid[rowIndex][colIndex];
+
+        if (!currentPoint) continue;
+
+        allInnerPoints.push(currentPoint);
+
+        const rightPoint = grid[rowIndex][colIndex + 1];
+        const bottomPoint = grid[rowIndex + 1]?.[colIndex];
+
+        if (rightPoint) {
+          drawLine(currentPoint, rightPoint);
+        }
+
+        if (bottomPoint) {
+          drawLine(currentPoint, bottomPoint);
+        }
+      }
+    }
+
+    // 2. 边界采样点之间互相连接
+    for (let i = 0; i < boundaryPoints.length; i++) {
+      const currentBoundaryPoint = boundaryPoints[i];
+      const nextBoundaryPoint = boundaryPoints[(i + 1) % boundaryPoints.length];
+
+      drawLine(currentBoundaryPoint, nextBoundaryPoint);
+    }
+
+    // 3. 边界采样点连接到附近的内部采样点
+    boundaryPoints.forEach(boundaryPoint => {
+      let nearestInnerPoint = null;
+      let nearestDistance = Infinity;
+
+      allInnerPoints.forEach(innerPoint => {
+        const distance = distanceBetweenPoints(boundaryPoint, innerPoint);
+
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestInnerPoint = innerPoint;
+        }
+      });
+
+      // 控制边界点和内部点的连接范围
+      // 数值越大，边界连接越多
+      if (nearestInnerPoint && nearestDistance <= spacing * 1.25) {
+        drawLine(boundaryPoint, nearestInnerPoint);
+      }
+    });
+  }
+
+  function drawLine(p1, p2) {
+    const line = createSvgElement("line");
+
+    line.setAttribute("x1", p1.x);
+    line.setAttribute("y1", p1.y);
+    line.setAttribute("x2", p2.x);
+    line.setAttribute("y2", p2.y);
+    line.setAttribute("stroke", "rgba(255,255,255,0.28)");
+    line.setAttribute("stroke-width", "1");
+
+    gridLinesGroup.appendChild(line);
+  }
+
+  function drawSamplingPoints(grid, boundaryPoints) {
+    samplingPointsGroup.innerHTML = "";
+
+    let index = 1;
+
+    // 1. 绘制内部采样点
+    grid.forEach(row => {
+      row.forEach(point => {
+        if (!point) return;
+
+        drawSamplingCircle(point, point.statusColor, `N-${index}`, pointRadius);
+        index++;
+      });
+    });
+
+    // 2. 绘制边界采样点
+    boundaryPoints.forEach((point, boundaryIndex) => {
+      drawSamplingCircle(point, "#ffffff", `B-${boundaryIndex + 1}`, pointRadius * 0.85);
+    });
+  }
+
+  function drawSamplingCircle(point, color, zoneId, radius) {
+    const circle = createSvgElement("circle");
+
+    circle.setAttribute("cx", point.x);
+    circle.setAttribute("cy", point.y);
+    circle.setAttribute("r", radius);
+    circle.setAttribute("fill", color);
+    circle.setAttribute("stroke", "rgba(255,255,255,0.9)");
+    circle.setAttribute("stroke-width", "1.2");
+    circle.setAttribute("data-zone", zoneId);
+
+    samplingPointsGroup.appendChild(circle);
+  }
+
+  generateSamplingGrid();
+</script>
+
+</body>
+</html>
