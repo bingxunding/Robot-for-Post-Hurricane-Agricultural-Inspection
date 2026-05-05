@@ -626,6 +626,18 @@
     return "#ef4444";
   }
 
+  function getPanelStatusColor(status) {
+    if (status === "Safe") {
+      return "#66d14f";
+    }
+
+    if (status === "Caution") {
+      return "#facc15";
+    }
+
+    return "#ef4444";
+  }
+
   function calculateHealthScore(soilMoisture, temperature, ece, ph) {
     let score = 100;
 
@@ -885,14 +897,14 @@
 
   function getRiskColor(status) {
     if (status === "STABLE") {
-      return "#a8d6a8";
+      return "#66d14f";
     }
 
     if (status === "CAUTION") {
       return "#facc15";
     }
 
-    return "#ffb4ab";
+    return "#ef4444";
   }
 
   function applyValueColor(element, status) {
@@ -902,7 +914,7 @@
     element.style.fontWeight = status === "STABLE" ? "500" : "700";
 
     if (status === "DANGER") {
-      element.style.textShadow = "0 0 6px rgba(255,180,171,0.6)";
+      element.style.textShadow = "0 0 6px rgba(239,68,68,0.65)";
     } else {
       element.style.textShadow = "none";
     }
@@ -946,6 +958,8 @@
       eceStatus === "DANGER" ||
       phStatus === "DANGER";
 
+    const panelStatusColor = getPanelStatusColor(point.status);
+
     if (zoneIdEl) zoneIdEl.textContent = point.id;
 
     if (zoneStatusEl) {
@@ -985,11 +999,11 @@
       recommendationEl.textContent = point.recommendation;
 
       if (hasDangerRecommendation) {
-        recommendationEl.style.color = "#ffb4ab";
+        recommendationEl.style.color = "#ef4444";
         recommendationEl.style.fontWeight = "700";
-        recommendationEl.style.textShadow = "0 0 6px rgba(255,180,171,0.6)";
+        recommendationEl.style.textShadow = "0 0 6px rgba(239,68,68,0.65)";
       } else {
-        recommendationEl.style.color = "#a8d6a8";
+        recommendationEl.style.color = "#66d14f";
         recommendationEl.style.fontWeight = "500";
         recommendationEl.style.textShadow = "none";
       }
@@ -997,29 +1011,27 @@
 
     if (fieldHealthScoreEl) {
       fieldHealthScoreEl.textContent = point.healthScore;
+      fieldHealthScoreEl.style.color = panelStatusColor;
     }
 
     if (fieldHealthLabelEl) {
-      if (point.healthScore >= 75) {
-        fieldHealthLabelEl.textContent = "OPTIMAL";
-        fieldHealthLabelEl.className = "text-[10px] font-bold text-primary tracking-widest";
-      } else if (point.healthScore >= 50) {
-        fieldHealthLabelEl.textContent = "CAUTION";
-        fieldHealthLabelEl.className = "text-[10px] font-bold text-yellow-300 tracking-widest";
-      } else {
-        fieldHealthLabelEl.textContent = "DANGER";
-        fieldHealthLabelEl.className = "text-[10px] font-bold text-error tracking-widest";
-      }
+      fieldHealthLabelEl.textContent = point.status.toUpperCase();
+      fieldHealthLabelEl.style.color = panelStatusColor;
+      fieldHealthLabelEl.className = "text-[10px] font-bold tracking-widest";
     }
 
     if (healthScoreRingEl) {
       const circumference = 364.4;
       const dashOffset = circumference * (1 - point.healthScore / 100);
+
       healthScoreRingEl.setAttribute("stroke-dashoffset", dashOffset);
+      healthScoreRingEl.setAttribute("stroke", panelStatusColor);
+      healthScoreRingEl.classList.remove("text-primary", "text-yellow-300", "text-error");
     }
 
     if (trendCurrentBarEl) {
       trendCurrentBarEl.style.height = `${point.healthScore}%`;
+      trendCurrentBarEl.style.backgroundColor = panelStatusColor;
     }
 
     if (thresholdSalinityEl) {
@@ -1055,15 +1067,17 @@
       mainInsightDescriptionEl.textContent = point.recommendation;
 
       if (hasDangerRecommendation) {
-        mainInsightDescriptionEl.style.color = "#ffb4ab";
+        mainInsightDescriptionEl.style.color = "#ef4444";
         mainInsightDescriptionEl.style.fontWeight = "700";
       } else {
-        mainInsightDescriptionEl.style.color = "#a8d6a8";
+        mainInsightDescriptionEl.style.color = "#66d14f";
         mainInsightDescriptionEl.style.fontWeight = "500";
       }
     }
 
     if (mainInsightIconEl) {
+      mainInsightIconEl.style.color = panelStatusColor;
+
       if (point.status === "Safe") {
         mainInsightIconEl.textContent = "check_circle";
       } else if (point.status === "Caution") {
