@@ -180,19 +180,6 @@
     </div>
   </nav>
 
-  <div class="mt-auto p-md border-t border-neutral-800 flex items-center gap-3">
-    <div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container border border-outline-variant">
-      <img
-        class="w-full h-full object-cover"
-        src="https://lh3.googleusercontent.com/aida/ADBb0uh0b2A4Wb2P21B1aTuZjIu2L88oLSNQBDVKgStcggwZX9VWqF5d463jfgH7_rBhW0dAu6sTOtoImEdeQJYyFUP4QQ09F5bDfCTLz5nJyeXVPq0O7tKzaAU6fGfu66RRwqGS10MhyWgv4l5JW2J6JNdcztGlatjMm26oYLknLf4N_GdB_WTArrnQafCOlV0htRmCt_TYOBChYGriyAIxssnvKYIkImLe1OUNekbfRpEWNTuFZyN-_bRrVDs"
-        alt="operator"
-      />
-    </div>
-    <div class="flex flex-col">
-      <span class="text-[10px] text-neutral-400 font-bold">OPERATOR ID</span>
-      <span class="text-xs text-on-surface">SYS_ADMIN_01</span>
-    </div>
-  </div>
 </aside>
 
 <!-- Main Content Area -->
@@ -416,122 +403,9 @@
     </div>
   </div>
 
-  <!-- Critical Thresholds list -->
-  <div class="p-md border-b border-white/5">
-    <h3 class="font-label-caps text-label-caps text-neutral-500 mb-md uppercase">
-      Critical Thresholds
-    </h3>
-
-    <div class="space-y-sm">
-      <div class="p-sm bg-surface-container-low border border-white/5 rounded flex justify-between items-center">
-        <div>
-          <p class="text-[10px] font-bold text-neutral-400">ECe</p>
-          <p class="font-h2 text-h2 text-on-surface">
-            <span id="threshold-salinity">1.4</span>
-            <span class="text-xs font-normal text-neutral-500">dS/m</span>
-          </p>
-        </div>
-
-        <span
-          id="salinity-status-badge"
-          class="px-xs py-[2px] bg-primary/20 text-primary text-[8px] font-black rounded"
-        >
-          STABLE
-        </span>
-      </div>
-
-      <div class="p-sm bg-surface-container-low border border-white/5 rounded flex justify-between items-center">
-        <div>
-          <p class="text-[10px] font-bold text-neutral-400">Moisture Content</p>
-          <p class="font-h2 text-h2 text-on-surface">
-            <span id="threshold-moisture">22.8</span>
-            <span class="text-xs font-normal text-neutral-500">%</span>
-          </p>
-        </div>
-
-        <span
-          id="moisture-status-badge"
-          class="px-xs py-[2px] bg-error/20 text-error text-[8px] font-black rounded"
-        >
-          CAUTION
-        </span>
-      </div>
-
-      <div class="p-sm bg-surface-container-low border border-white/5 rounded flex justify-between items-center">
-        <div>
-          <p class="text-[10px] font-bold text-neutral-400">pH</p>
-          <p class="font-h2 text-h2 text-on-surface">
-            <span id="threshold-compaction">7.2</span>
-          </p>
-        </div>
-
-        <span
-          id="compaction-status-badge"
-          class="px-xs py-[2px] bg-primary/20 text-primary text-[8px] font-black rounded"
-        >
-          STABLE
-        </span>
-      </div>
     </div>
   </div>
 
-  <!-- Automated Recommendations -->
-  <div class="p-md">
-    <h3 class="font-label-caps text-label-caps text-neutral-500 mb-md uppercase">
-      Core Insights
-    </h3>
-
-    <div class="space-y-sm">
-      <div class="p-sm bg-primary/5 border border-primary/20 rounded flex gap-sm">
-        <span
-          id="main-insight-icon"
-          class="material-symbols-outlined text-primary text-md"
-          data-icon="water_drop"
-        >
-          water_drop
-        </span>
-
-        <div>
-          <p
-            id="main-insight-title"
-            class="text-[11px] font-bold text-on-surface leading-tight"
-          >
-            Select a Zone
-          </p>
-
-          <p
-            id="main-insight-description"
-            class="text-[10px] text-neutral-400 mt-xs"
-          >
-            Click a sampling point on the field map to load sensor data and recommendations.
-          </p>
-        </div>
-      </div>
-
-      <div class="p-sm bg-surface-container-low border border-white/5 rounded flex gap-sm opacity-60">
-        <span
-          class="material-symbols-outlined text-neutral-500 text-md"
-          data-icon="pest_control"
-        >
-          pest_control
-        </span>
-
-        <div>
-          <p class="text-[11px] font-bold text-on-surface leading-tight">
-            Pest Alert: Sector 4
-          </p>
-
-          <p class="text-[10px] text-neutral-400 mt-xs">
-            Anomaly detected in satellite imagery. Recommend manual field scouting.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <button class="w-full mt-lg py-md border border-outline-variant text-neutral-400 text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-colors">
-      View Intelligence Log
-    </button>
-  </div>
 </aside>
 </main>
 
@@ -690,40 +564,74 @@
     return Number((Math.random() * (max - min) + min).toFixed(decimals));
   }
 
+  function getMoistureStatus(soilMoisture) {
+    if (soilMoisture < 10 || soilMoisture > 60) {
+      return "DANGER";
+    }
+
+    if (soilMoisture < 20 || soilMoisture > 40) {
+      return "CAUTION";
+    }
+
+    return "STABLE";
+  }
+
+  function getTemperatureStatus(temperature) {
+    if (temperature < 5 || temperature > 32) {
+      return "DANGER";
+    }
+
+    if (temperature < 18 || temperature > 26) {
+      return "CAUTION";
+    }
+
+    return "STABLE";
+  }
+
+  function getEceStatus(ece) {
+    if (ece > 4) {
+      return "DANGER";
+    }
+
+    if (ece > 2) {
+      return "CAUTION";
+    }
+
+    return "STABLE";
+  }
+
+  function getPhStatus(ph) {
+    if (ph < 4.5 || ph > 9.0) {
+      return "DANGER";
+    }
+
+    if (ph < 6.5 || ph > 8.4) {
+      return "CAUTION";
+    }
+
+    return "STABLE";
+  }
+
+  function hasDangerValue(soilMoisture, temperature, ece, ph) {
+    return (
+      getMoistureStatus(soilMoisture) === "DANGER" ||
+      getTemperatureStatus(temperature) === "DANGER" ||
+      getEceStatus(ece) === "DANGER" ||
+      getPhStatus(ph) === "DANGER"
+    );
+  }
+
   function getPointStatus(soilMoisture, temperature, ece, ph) {
-    const moistureStatus =
-      soilMoisture < 10 || soilMoisture > 60
-        ? "Danger"
-        : soilMoisture < 20 || soilMoisture > 40
-          ? "Caution"
-          : "Safe";
+    const moistureStatus = getMoistureStatus(soilMoisture);
+    const temperatureStatus = getTemperatureStatus(temperature);
+    const eceStatus = getEceStatus(ece);
+    const phStatus = getPhStatus(ph);
 
-    const temperatureStatus =
-      temperature < 5 || temperature > 32
-        ? "Danger"
-        : temperature < 18 || temperature > 26
-          ? "Caution"
-          : "Safe";
-
-    const eceStatus =
-      ece > 4
-        ? "Danger"
-        : ece > 2
-          ? "Caution"
-          : "Safe";
-
-    const phStatus =
-      ph < 4.5 || ph > 9.0
-        ? "Danger"
-        : ph < 6.5 || ph > 8.4
-          ? "Caution"
-          : "Safe";
-
-    if ([moistureStatus, temperatureStatus, eceStatus, phStatus].includes("Danger")) {
+    if ([moistureStatus, temperatureStatus, eceStatus, phStatus].includes("DANGER")) {
       return "Danger";
     }
 
-    if ([moistureStatus, temperatureStatus, eceStatus, phStatus].includes("Caution")) {
+    if ([moistureStatus, temperatureStatus, eceStatus, phStatus].includes("CAUTION")) {
       return "Caution";
     }
 
@@ -762,26 +670,26 @@
   }
 
   function getRecommendation(status, soilMoisture, temperature, ece, ph) {
-    if (status === "Safe") {
-      return "All parameters are within the safe range.";
-    }
-
     const recommendations = [];
 
-    if (soilMoisture < 20 || soilMoisture > 40) {
+    if (soilMoisture < 10 || soilMoisture > 60) {
       recommendations.push("Soil Moisture: Delay operations.");
     }
 
-    if (temperature < 18 || temperature > 26) {
+    if (temperature < 5 || temperature > 32) {
       recommendations.push("Temperature: Remove contaminated material / deep clean before reuse.");
     }
 
-    if (ece > 2) {
+    if (ece > 4) {
       recommendations.push("ECe: Stop planting / initiate full soil reclamation.");
     }
 
-    if (ph < 6.5 || ph > 8.4) {
+    if (ph < 4.5 || ph > 9.0) {
       recommendations.push("pH: Do not use water / treat before reuse.");
+    }
+
+    if (recommendations.length === 0) {
+      return "All parameters are within the safe range.";
     }
 
     return recommendations.join("\n");
@@ -999,6 +907,31 @@
     circle.setAttribute("r", pointRadius + 2);
   }
 
+  function getRiskColor(status) {
+    if (status === "STABLE") {
+      return "#a8d6a8";
+    }
+
+    if (status === "CAUTION") {
+      return "#facc15";
+    }
+
+    return "#ffb4ab";
+  }
+
+  function applyValueColor(element, status) {
+    if (!element) return;
+
+    element.style.color = getRiskColor(status);
+    element.style.fontWeight = status === "STABLE" ? "500" : "700";
+
+    if (status === "DANGER") {
+      element.style.textShadow = "0 0 6px rgba(255,180,171,0.6)";
+    } else {
+      element.style.textShadow = "none";
+    }
+  }
+
   function updateRightPanel(point) {
     const zoneIdEl = document.getElementById("zone-id");
     const zoneStatusEl = document.getElementById("zone-status");
@@ -1026,6 +959,17 @@
     const mainInsightDescriptionEl = document.getElementById("main-insight-description");
     const mainInsightIconEl = document.getElementById("main-insight-icon");
 
+    const moistureStatus = getMoistureStatus(point.soilMoisture);
+    const temperatureStatus = getTemperatureStatus(point.temperature);
+    const eceStatus = getEceStatus(point.ece);
+    const phStatus = getPhStatus(point.ph);
+
+    const hasDangerRecommendation =
+      moistureStatus === "DANGER" ||
+      temperatureStatus === "DANGER" ||
+      eceStatus === "DANGER" ||
+      phStatus === "DANGER";
+
     if (zoneIdEl) zoneIdEl.textContent = point.id;
 
     if (zoneStatusEl) {
@@ -1041,12 +985,39 @@
       }
     }
 
-    if (soilMoistureEl) soilMoistureEl.textContent = `${point.soilMoisture}%`;
-    if (temperatureEl) temperatureEl.textContent = `${point.temperature} °C`;
-    if (eceEl) eceEl.textContent = `${point.ece} dS/m`;
-    if (phEl) phEl.textContent = point.ph;
+    if (soilMoistureEl) {
+      soilMoistureEl.textContent = `${point.soilMoisture}%`;
+      applyValueColor(soilMoistureEl, moistureStatus);
+    }
 
-    if (recommendationEl) recommendationEl.textContent = point.recommendation;
+    if (temperatureEl) {
+      temperatureEl.textContent = `${point.temperature} °C`;
+      applyValueColor(temperatureEl, temperatureStatus);
+    }
+
+    if (eceEl) {
+      eceEl.textContent = `${point.ece} dS/m`;
+      applyValueColor(eceEl, eceStatus);
+    }
+
+    if (phEl) {
+      phEl.textContent = point.ph;
+      applyValueColor(phEl, phStatus);
+    }
+
+    if (recommendationEl) {
+      recommendationEl.textContent = point.recommendation;
+
+      if (hasDangerRecommendation) {
+        recommendationEl.style.color = "#ffb4ab";
+        recommendationEl.style.fontWeight = "700";
+        recommendationEl.style.textShadow = "0 0 6px rgba(255,180,171,0.6)";
+      } else {
+        recommendationEl.style.color = "#a8d6a8";
+        recommendationEl.style.fontWeight = "500";
+        recommendationEl.style.textShadow = "none";
+      }
+    }
 
     if (fieldHealthScoreEl) {
       fieldHealthScoreEl.textContent = point.healthScore;
@@ -1075,32 +1046,24 @@
       trendCurrentBarEl.style.height = `${point.healthScore}%`;
     }
 
-    if (thresholdSalinityEl) thresholdSalinityEl.textContent = point.ece;
-    if (thresholdMoistureEl) thresholdMoistureEl.textContent = point.soilMoisture;
-    if (thresholdCompactionEl) thresholdCompactionEl.textContent = point.ph;
+    if (thresholdSalinityEl) {
+      thresholdSalinityEl.textContent = point.ece;
+      applyValueColor(thresholdSalinityEl, eceStatus);
+    }
 
-    updateBadge(
-      salinityBadgeEl,
-      point.ece > 4 ? "DANGER" : point.ece > 2 ? "CAUTION" : "STABLE"
-    );
+    if (thresholdMoistureEl) {
+      thresholdMoistureEl.textContent = point.soilMoisture;
+      applyValueColor(thresholdMoistureEl, moistureStatus);
+    }
 
-    updateBadge(
-      moistureBadgeEl,
-      point.soilMoisture < 10 || point.soilMoisture > 60
-        ? "DANGER"
-        : point.soilMoisture < 20 || point.soilMoisture > 40
-          ? "CAUTION"
-          : "STABLE"
-    );
+    if (thresholdCompactionEl) {
+      thresholdCompactionEl.textContent = point.ph;
+      applyValueColor(thresholdCompactionEl, phStatus);
+    }
 
-    updateBadge(
-      compactionBadgeEl,
-      point.ph < 4.5 || point.ph > 9.0
-        ? "DANGER"
-        : point.ph < 6.5 || point.ph > 8.4
-          ? "CAUTION"
-          : "STABLE"
-    );
+    updateBadge(salinityBadgeEl, eceStatus);
+    updateBadge(moistureBadgeEl, moistureStatus);
+    updateBadge(compactionBadgeEl, phStatus);
 
     if (mainInsightTitleEl) {
       if (point.status === "Safe") {
@@ -1114,6 +1077,14 @@
 
     if (mainInsightDescriptionEl) {
       mainInsightDescriptionEl.textContent = point.recommendation;
+
+      if (hasDangerRecommendation) {
+        mainInsightDescriptionEl.style.color = "#ffb4ab";
+        mainInsightDescriptionEl.style.fontWeight = "700";
+      } else {
+        mainInsightDescriptionEl.style.color = "#a8d6a8";
+        mainInsightDescriptionEl.style.fontWeight = "500";
+      }
     }
 
     if (mainInsightIconEl) {
