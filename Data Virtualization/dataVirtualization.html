@@ -201,7 +201,13 @@
 >
   <defs>
     <mask id="field-mask">
-      <rect x="0" y="0" width="1000" height="600" fill="white" />
+      <rect
+        x="0"
+        y="0"
+        width="1000"
+        height="600"
+        fill="white"
+      />
 
       <polygon
         points="89,141 651,90 676,596 457,592 134,280"
@@ -210,7 +216,7 @@
     </mask>
   </defs>
 
-  <!-- 周围变暗 -->
+  <!-- 周围变暗：不接收点击事件 -->
   <rect
     x="0"
     y="0"
@@ -218,21 +224,29 @@
     height="600"
     fill="rgba(0,0,0,0.5)"
     mask="url(#field-mask)"
+    pointer-events="none"
   />
 
-  <!-- 采样点之间的连接线 -->
-  <g id="grid-lines"></g>
+  <!-- 采样点之间的连接线：不接收点击事件 -->
+  <g
+    id="grid-lines"
+    pointer-events="none"
+  ></g>
 
-  <!-- 采样点 -->
-  <g id="sampling-points"></g>
+  <!-- 采样点：允许点击 -->
+  <g
+    id="sampling-points"
+    pointer-events="auto"
+  ></g>
 
-  <!-- 农田边界 -->
+  <!-- 农田边界：不接收点击事件，避免挡住采样点 -->
   <polygon
     id="field-boundary"
     points="89,141 651,90 676,596 457,592 134,280"
     fill="transparent"
     stroke="#ffffff"
     stroke-width="3"
+    pointer-events="none"
   />
 </svg>
 
@@ -273,23 +287,23 @@
         </div>
 
         <div class="p-sm bg-black/20 border border-white/5 rounded">
-          <p class="text-[10px] font-bold text-neutral-400">Salinity</p>
+          <p class="text-[10px] font-bold text-neutral-400">Temperature</p>
           <p class="font-h2 text-h2 text-on-surface">
-            <span id="salinity-index">-</span>
+            <span id="temperatureId">-</span>
           </p>
         </div>
 
         <div class="p-sm bg-black/20 border border-white/5 rounded">
-          <p class="text-[10px] font-bold text-neutral-400">Compaction</p>
+          <p class="text-[10px] font-bold text-neutral-400">ECe</p>
           <p class="font-h2 text-h2 text-on-surface">
-            <span id="compaction">-</span>
+            <span id="eceId">-</span>
           </p>
         </div>
 
         <div class="p-sm bg-black/20 border border-white/5 rounded">
-          <p class="text-[10px] font-bold text-neutral-400">Health Score</p>
+          <p class="text-[10px] font-bold text-neutral-400">PH</p>
           <p class="font-h2 text-h2 text-on-surface">
-            <span id="point-health-score">-</span>
+            <span id="phId">-</span>
           </p>
         </div>
       </div>
@@ -573,6 +587,7 @@
   });
 </script>
 -->
+
 <script>
   const polygonPoints = [
     { x: 89, y: 141 },
@@ -582,12 +597,14 @@
     { x: 134, y: 280 }
   ];
 
-  const spacing = 35;          // 采样点间距，数值越小点越密
-  const pointRadius = 4;       // 内部采样点大小
-  const boundaryPadding = 12;  // 距离边界小于这个值的内部点不绘制
+  const spacing = 35;
+  const pointRadius = 4;
+  const boundaryPadding = 12;
 
   const gridLinesGroup = document.getElementById("grid-lines");
   const samplingPointsGroup = document.getElementById("sampling-points");
+
+  let selectedCircle = null;
 
   function isPointInsidePolygon(point, polygon) {
     let inside = false;
@@ -606,18 +623,6 @@
     }
 
     return inside;
-  }
-
-  function getStatusColor() {
-    const random = Math.random();
-
-    if (random < 0.65) {
-      return "#66d14f"; // Safe - green
-    } else if (random < 0.88) {
-      return "#facc15"; // Caution - yellow
-    } else {
-      return "#ef4444"; // Danger - red
-    }
   }
 
   function createSvgElement(tag) {
@@ -644,8 +649,6 @@
     }
 
     let t = (apX * abX + apY * abY) / abLengthSquared;
-
-    // 限制投影点必须在线段内部
     t = Math.max(0, Math.min(1, t));
 
     return {
@@ -672,6 +675,111 @@
     return minDistance;
   }
 
+  function randomBetween(min, max, decimals = 1) {
+    return Number((Math.random() * (max - min) + min).toFixed(decimals));
+  }
+
+  function getPointStatus(soilMoisture, salinity, compaction) {
+    if (soilMoisture < 15 || salinity > 4.5 || compaction > 420) {
+      return "Danger";
+    }
+
+    if (soilMoisture < 22 || salinity > 3.2 || compaction > 330) {
+      return "Caution";
+    }
+
+    return "Safe";
+  }
+
+  function getStatusColorByStatus(status) {
+    if (status === "Safe") {
+      return "#66d14f";
+    }
+
+    if (status === "Caution") {
+      return "#facc15";
+    }
+
+    return "#ef4444";
+  }
+
+  function calculateHealthScore(soilMoisture, salinity, compaction) {
+    let score = 100;
+
+    if (soilMoisture < 20) {
+      score -= (20 - soilMoisture) * 2;
+    }
+
+    if (salinity > 2.5) {
+      score -= (salinity - 2.5) * 8;
+    }
+
+    if (compaction > 280) {
+      score -= (compaction - 280) * 0.08;
+    }
+
+    return Math.max(0, Math.min(100, Math.round(score)));
+  }
+
+  function getRecommendation(status, soilMoisture, salinity, compaction) {
+    if (status === "Safe") {
+      return "No urgent action required. Continue regular monitoring.";
+    }
+
+    if (status === "Caution") {
+      if (soilMoisture < 22) {
+        return "Moisture is slightly low. Consider moderate irrigation and re-check in 3–5 days.";
+      }
+
+      if (salinity > 3.2) {
+        return "Salinity is above the caution level. Consider leaching with irrigation.";
+      }
+
+      if (compaction > 330) {
+        return "Soil compaction is increasing. Reduce heavy vehicle traffic in this zone.";
+      }
+
+      return "Condition requires attention. Monitor this area more frequently.";
+    }
+
+    if (soilMoisture < 15) {
+      return "Soil moisture is critically low. Apply irrigation as soon as possible.";
+    }
+
+    if (salinity > 4.5) {
+      return "Salinity is critically high. Leach the soil and avoid salt-sensitive crops.";
+    }
+
+    if (compaction > 420) {
+      return "Compaction is critically high. Aeration or deep tillage may be required.";
+    }
+
+    return "High-risk zone detected. Inspect this area manually.";
+  }
+
+  function createSamplingPoint(x, y, index) {
+    const soilMoisture = randomBetween(10, 38, 1);
+    const salinity = randomBetween(1.0, 5.5, 1);
+    const compaction = randomBetween(180, 480, 0);
+
+    const status = getPointStatus(soilMoisture, salinity, compaction);
+    const healthScore = calculateHealthScore(soilMoisture, salinity, compaction);
+
+    return {
+      id: `N-${index}`,
+      x,
+      y,
+      type: "inner",
+      soilMoisture,
+      salinity,
+      compaction,
+      status,
+      statusColor: getStatusColorByStatus(status),
+      healthScore,
+      recommendation: getRecommendation(status, soilMoisture, salinity, compaction)
+    };
+  }
+
   function generateSamplingGrid() {
     const minX = Math.min(...polygonPoints.map(p => p.x));
     const maxX = Math.max(...polygonPoints.map(p => p.x));
@@ -679,6 +787,7 @@
     const maxY = Math.max(...polygonPoints.map(p => p.y));
 
     const grid = [];
+    let pointIndex = 1;
 
     for (let y = minY; y <= maxY; y += spacing) {
       const row = [];
@@ -690,12 +799,8 @@
         const distanceToBoundary = getDistanceToPolygonBoundary(point, polygonPoints);
 
         if (isInside && distanceToBoundary > boundaryPadding) {
-          row.push({
-            x,
-            y,
-            type: "inner",
-            statusColor: getStatusColor()
-          });
+          row.push(createSamplingPoint(x, y, pointIndex));
+          pointIndex++;
         } else {
           row.push(null);
         }
@@ -718,8 +823,6 @@
       const end = polygonPoints[(i + 1) % polygonPoints.length];
 
       const edgeLength = distanceBetweenPoints(start, end);
-
-      // 每条边上生成若干个点
       const count = Math.max(1, Math.floor(edgeLength / spacing));
 
       for (let j = 0; j <= count; j++) {
@@ -729,6 +832,7 @@
           x: start.x + (end.x - start.x) * t,
           y: start.y + (end.y - start.y) * t,
           type: "boundary",
+          id: `B-${boundaryPoints.length + 1}`,
           statusColor: "#ffffff"
         });
       }
@@ -742,7 +846,6 @@
 
     const allInnerPoints = [];
 
-    // 1. 内部采样点之间的横向、纵向连接
     for (let rowIndex = 0; rowIndex < grid.length; rowIndex++) {
       for (let colIndex = 0; colIndex < grid[rowIndex].length; colIndex++) {
         const currentPoint = grid[rowIndex][colIndex];
@@ -764,7 +867,6 @@
       }
     }
 
-    // 2. 边界采样点之间互相连接
     for (let i = 0; i < boundaryPoints.length; i++) {
       const currentBoundaryPoint = boundaryPoints[i];
       const nextBoundaryPoint = boundaryPoints[(i + 1) % boundaryPoints.length];
@@ -772,7 +874,6 @@
       drawLine(currentBoundaryPoint, nextBoundaryPoint);
     }
 
-    // 3. 边界采样点连接到附近的内部采样点
     boundaryPoints.forEach(boundaryPoint => {
       let nearestInnerPoint = null;
       let nearestDistance = Infinity;
@@ -786,8 +887,6 @@
         }
       });
 
-      // 控制边界点和内部点的连接范围
-      // 数值越大，边界连接越多
       if (nearestInnerPoint && nearestDistance <= spacing * 1.25) {
         drawLine(boundaryPoint, nearestInnerPoint);
       }
@@ -803,6 +902,7 @@
     line.setAttribute("y2", p2.y);
     line.setAttribute("stroke", "rgba(255,255,255,0.28)");
     line.setAttribute("stroke-width", "1");
+    line.setAttribute("pointer-events", "none");
 
     gridLinesGroup.appendChild(line);
   }
@@ -810,25 +910,20 @@
   function drawSamplingPoints(grid, boundaryPoints) {
     samplingPointsGroup.innerHTML = "";
 
-    let index = 1;
-
-    // 1. 绘制内部采样点
     grid.forEach(row => {
       row.forEach(point => {
         if (!point) return;
 
-        drawSamplingCircle(point, point.statusColor, `N-${index}`, pointRadius);
-        index++;
+        drawSamplingCircle(point, point.statusColor, point.id, pointRadius, true);
       });
     });
 
-    // 2. 绘制边界采样点
-    boundaryPoints.forEach((point, boundaryIndex) => {
-      drawSamplingCircle(point, "#ffffff", `B-${boundaryIndex + 1}`, pointRadius * 0.85);
+    boundaryPoints.forEach(point => {
+      drawSamplingCircle(point, "#ffffff", point.id, pointRadius * 0.85, false);
     });
   }
 
-  function drawSamplingCircle(point, color, zoneId, radius) {
+  function drawSamplingCircle(point, color, zoneId, radius, clickable) {
     const circle = createSvgElement("circle");
 
     circle.setAttribute("cx", point.x);
@@ -839,9 +934,172 @@
     circle.setAttribute("stroke-width", "1.2");
     circle.setAttribute("data-zone", zoneId);
 
+    if (clickable) {
+      circle.style.cursor = "pointer";
+      circle.setAttribute("pointer-events", "auto");
+
+      circle.addEventListener("click", function (event) {
+        event.stopPropagation();
+
+        console.log("Clicked sampling point:", point);
+
+        updateRightPanel(point);
+        highlightSelectedPoint(circle);
+      });
+    } else {
+      circle.setAttribute("pointer-events", "none");
+    }
+
     samplingPointsGroup.appendChild(circle);
   }
 
+  function highlightSelectedPoint(circle) {
+    if (selectedCircle) {
+      selectedCircle.setAttribute("stroke", "rgba(255,255,255,0.9)");
+      selectedCircle.setAttribute("stroke-width", "1.2");
+      selectedCircle.setAttribute("r", pointRadius);
+    }
+
+    selectedCircle = circle;
+
+    circle.setAttribute("stroke", "#ffffff");
+    circle.setAttribute("stroke-width", "3");
+    circle.setAttribute("r", pointRadius + 2);
+  }
+
+  function updateRightPanel(point) {
+    const zoneIdEl = document.getElementById("zone-id");
+    const zoneStatusEl = document.getElementById("zone-status");
+
+    const soilMoistureEl = document.getElementById("soil-moisture");
+    const salinityIndexEl = document.getElementById("temperatureId");
+    const compactionEl = document.getElementById("eceId");
+    const healthScoreEl = document.getElementById("phId");
+    const recommendationEl = document.getElementById("recommendation");
+
+    const fieldHealthScoreEl = document.getElementById("field-health-score");
+    const fieldHealthLabelEl = document.getElementById("field-health-label");
+    const healthScoreRingEl = document.getElementById("health-score-ring");
+    const trendCurrentBarEl = document.getElementById("trend-current-bar");
+
+    const thresholdSalinityEl = document.getElementById("threshold-salinity");
+    const thresholdMoistureEl = document.getElementById("threshold-moisture");
+    const thresholdCompactionEl = document.getElementById("threshold-compaction");
+
+    const salinityBadgeEl = document.getElementById("salinity-status-badge");
+    const moistureBadgeEl = document.getElementById("moisture-status-badge");
+    const compactionBadgeEl = document.getElementById("compaction-status-badge");
+
+    const mainInsightTitleEl = document.getElementById("main-insight-title");
+    const mainInsightDescriptionEl = document.getElementById("main-insight-description");
+    const mainInsightIconEl = document.getElementById("main-insight-icon");
+
+    if (zoneIdEl) zoneIdEl.textContent = point.id;
+
+    if (zoneStatusEl) {
+      zoneStatusEl.textContent = point.status.toUpperCase();
+      zoneStatusEl.className = "px-xs py-[2px] text-[8px] font-black rounded uppercase";
+
+      if (point.status === "Safe") {
+        zoneStatusEl.classList.add("bg-primary/20", "text-primary");
+      } else if (point.status === "Caution") {
+        zoneStatusEl.classList.add("bg-yellow-500/20", "text-yellow-300");
+      } else {
+        zoneStatusEl.classList.add("bg-error/20", "text-error");
+      }
+    }
+
+    if (soilMoistureEl) soilMoistureEl.textContent = `${point.soilMoisture}%`;
+    if (salinityIndexEl) salinityIndexEl.textContent = `${point.salinity} mS/cm`;
+    if (compactionEl) compactionEl.textContent = `${point.compaction} psi`;
+    if (healthScoreEl) healthScoreEl.textContent = point.healthScore;
+    if (recommendationEl) recommendationEl.textContent = point.recommendation;
+
+    if (fieldHealthScoreEl) {
+      fieldHealthScoreEl.textContent = point.healthScore;
+    }
+
+    if (fieldHealthLabelEl) {
+      if (point.healthScore >= 75) {
+        fieldHealthLabelEl.textContent = "OPTIMAL";
+        fieldHealthLabelEl.className = "text-[10px] font-bold text-primary tracking-widest";
+      } else if (point.healthScore >= 50) {
+        fieldHealthLabelEl.textContent = "CAUTION";
+        fieldHealthLabelEl.className = "text-[10px] font-bold text-yellow-300 tracking-widest";
+      } else {
+        fieldHealthLabelEl.textContent = "DANGER";
+        fieldHealthLabelEl.className = "text-[10px] font-bold text-error tracking-widest";
+      }
+    }
+
+    if (healthScoreRingEl) {
+      const circumference = 364.4;
+      const dashOffset = circumference * (1 - point.healthScore / 100);
+      healthScoreRingEl.setAttribute("stroke-dashoffset", dashOffset);
+    }
+
+    if (trendCurrentBarEl) {
+      trendCurrentBarEl.style.height = `${point.healthScore}%`;
+    }
+
+    if (thresholdSalinityEl) thresholdSalinityEl.textContent = point.salinity;
+    if (thresholdMoistureEl) thresholdMoistureEl.textContent = point.soilMoisture;
+    if (thresholdCompactionEl) thresholdCompactionEl.textContent = point.compaction;
+
+    updateBadge(
+      salinityBadgeEl,
+      point.salinity > 4.5 ? "DANGER" : point.salinity > 3.2 ? "CAUTION" : "STABLE"
+    );
+
+    updateBadge(
+      moistureBadgeEl,
+      point.soilMoisture < 15 ? "DANGER" : point.soilMoisture < 22 ? "CAUTION" : "STABLE"
+    );
+
+    updateBadge(
+      compactionBadgeEl,
+      point.compaction > 420 ? "DANGER" : point.compaction > 330 ? "CAUTION" : "STABLE"
+    );
+
+    if (mainInsightTitleEl) {
+      if (point.status === "Safe") {
+        mainInsightTitleEl.textContent = `Stable Condition: ${point.id}`;
+      } else if (point.status === "Caution") {
+        mainInsightTitleEl.textContent = `Attention Needed: ${point.id}`;
+      } else {
+        mainInsightTitleEl.textContent = `Critical Risk: ${point.id}`;
+      }
+    }
+
+    if (mainInsightDescriptionEl) {
+      mainInsightDescriptionEl.textContent = point.recommendation;
+    }
+
+    if (mainInsightIconEl) {
+      if (point.status === "Safe") {
+        mainInsightIconEl.textContent = "check_circle";
+      } else if (point.status === "Caution") {
+        mainInsightIconEl.textContent = "warning";
+      } else {
+        mainInsightIconEl.textContent = "error";
+      }
+    }
+  }
+
+  function updateBadge(element, status) {
+    if (!element) return;
+
+    element.textContent = status;
+    element.className = "px-xs py-[2px] text-[8px] font-black rounded";
+
+    if (status === "STABLE") {
+      element.classList.add("bg-primary/20", "text-primary");
+    } else if (status === "CAUTION") {
+      element.classList.add("bg-yellow-500/20", "text-yellow-300");
+    } else {
+      element.classList.add("bg-error/20", "text-error");
+    }
+  }
   generateSamplingGrid();
 </script>
 
