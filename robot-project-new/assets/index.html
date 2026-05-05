@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Robot Control</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>ROBOT CONTROL</h1>
+
+  <div class="grid">
+    <button onclick="sendCommand('forward')">⬆️</button>
+    <div></div>
+    <button onclick="sendCommand('left')">⬅️</button>
+    <button onclick="sendCommand('stop')">⏹️</button>
+    <button onclick="sendCommand('right')">➡️</button>
+    <div></div>
+    <button onclick="sendCommand('backward')">⬇️</button>
+  </div>
+
+  <div class="arm-controls">
+  <p>ARM:</p>
+  <button onclick="sendCommand('arm_down')">DOWN</button>
+  <button onclick="sendCommand('arm_stop')">STOP</button>
+  <button onclick="sendCommand('arm_up')">UP</button>
+</div>
+
+  <p id="status">Loading...</p>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
