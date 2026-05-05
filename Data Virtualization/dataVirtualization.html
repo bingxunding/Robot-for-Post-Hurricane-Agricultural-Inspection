@@ -335,9 +335,9 @@
 
       <div class="mt-sm pt-sm border-t border-white/5">
         <p class="text-[10px] font-bold text-neutral-400 mb-xs">Recommendation</p>
-        <p id="recommendation" class="text-[10px] text-neutral-400 leading-snug">
-          Select a sampling point to view details.
-        </p>
+          <p id="recommendation" class="text-[10px] text-neutral-400 leading-snug whitespace-pre-line">
+            Select a sampling point to view details.
+          </p>
       </div>
     </div>
   </div>
@@ -763,26 +763,28 @@
 
   function getRecommendation(status, soilMoisture, temperature, ece, ph) {
     if (status === "Safe") {
-      return "All measured parameters are within the safe range. Continue regular monitoring.";
+      return "All parameters are within the safe range.";
     }
 
-    if (soilMoisture < 10 || soilMoisture > 60) {
-      return "Soil moisture is in the danger range. Adjust irrigation strategy and re-check this zone.";
+    const recommendations = [];
+
+    if (soilMoisture < 20 || soilMoisture > 40) {
+      recommendations.push("Soil Moisture: Delay operations.");
     }
 
-    if (temperature < 5 || temperature > 32) {
-      return "Temperature is in the danger range. Increase monitoring and avoid stress-sensitive operations.";
+    if (temperature < 18 || temperature > 26) {
+      recommendations.push("Temperature: Remove contaminated material / deep clean before reuse.");
     }
 
-    if (ece > 4) {
-      return "ECe is high. Consider leaching, drainage improvement, or salt-tolerant crop management.";
+    if (ece > 2) {
+      recommendations.push("ECe: Stop planting / initiate full soil reclamation.");
     }
 
-    if (ph < 4.5 || ph > 9.0) {
-      return "pH is outside the acceptable range. Soil amendment may be required before planting.";
+    if (ph < 6.5 || ph > 8.4) {
+      recommendations.push("pH: Do not use water / treat before reuse.");
     }
 
-    return "One or more parameters are in the warning range. Monitor this zone more frequently.";
+    return recommendations.join("\n");
   }
 
   function createSamplingPoint(x, y, index) {
