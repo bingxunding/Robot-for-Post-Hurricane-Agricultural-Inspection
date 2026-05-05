@@ -638,23 +638,30 @@
     return "#ef4444";
   }
 
-  function calculateHealthScore(soilMoisture, temperature, ece, ph) {
-    let score = 100;
-
-    const status = getPointStatus(soilMoisture, temperature, ece, ph);
-
-    if (status === "Danger") {
-      score -= 35;
-    } else if (status === "Caution") {
-      score -= 18;
+  function getSingleParameterScore(status) {
+    if (status === "DANGER") {
+      return 8;
     }
 
-    if (soilMoisture < 20 || soilMoisture > 40) score -= 8;
-    if (temperature < 18 || temperature > 26) score -= 8;
-    if (ece > 2) score -= 8;
-    if (ph < 6.5 || ph > 8.4) score -= 8;
+    if (status === "CAUTION") {
+      return 16;
+    }
 
-    return Math.max(0, Math.min(100, Math.round(score)));
+    return 25;
+  }
+
+  function calculateHealthScore(soilMoisture, temperature, ece, ph) {
+    const moistureStatus = getMoistureStatus(soilMoisture);
+    const temperatureStatus = getTemperatureStatus(temperature);
+    const eceStatus = getEceStatus(ece);
+    const phStatus = getPhStatus(ph);
+
+    const moistureScore = getSingleParameterScore(moistureStatus);
+    const temperatureScore = getSingleParameterScore(temperatureStatus);
+    const eceScore = getSingleParameterScore(eceStatus);
+    const phScore = getSingleParameterScore(phStatus);
+
+    return moistureScore + temperatureScore + eceScore + phScore;
   }
 
   function getRecommendation(status, soilMoisture, temperature, ece, ph) {
