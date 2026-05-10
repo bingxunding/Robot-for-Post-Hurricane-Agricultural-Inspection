@@ -19,6 +19,16 @@ STEP_FORWARD_TIME = 0.5
 STEP_TURN_TIME = 0.4
 STEP_STOP_TIME = 0.2
 
+# Obstacle avoidance configuration
+OBSTACLE_THRESHOLD_CM = 20
+
+# tempcode
+latest_sonar = {
+    "front": 999,
+    "left": 999,
+    "right": 999
+}
+
 autonomous_started = False
 
 # ============================================================
@@ -56,16 +66,43 @@ def printMovement(direction):
 Bridge.provide("print_movement", printMovement)
 
 # ============================================================
-# Sonar part - TempCode_dingbingxun
+# Sonar part
 # ============================================================
 def on_sonar_data1(msg):
-    print("SONAR1:", msg)
+def on_sonar_data1(msg):
+    """
+    Sonar 1 is treated as the front ultrasonic sensor.
+    """
+    try:
+        latest_sonar["front"] = int(msg)
+    except ValueError:
+        pass
+
+    print("SONAR1 / FRONT:", msg)
+
 
 def on_sonar_data2(msg):
-    print("SONAR2:", msg)
+    """
+    Sonar 2 is treated as the left ultrasonic sensor.
+    """
+    try:
+        latest_sonar["left"] = int(msg)
+    except ValueError:
+        pass
+
+    print("SONAR2 / LEFT:", msg)
+
 
 def on_sonar_data3(msg):
-    print("SONAR3:", msg)
+    """
+    Sonar 3 is treated as the right ultrasonic sensor.
+    """
+    try:
+        latest_sonar["right"] = int(msg)
+    except ValueError:
+        pass
+
+    print("SONAR3 / RIGHT:", msg)
 
 Bridge.provide("sonar_data1", on_sonar_data1)
 Bridge.provide("sonar_data2", on_sonar_data2)
@@ -122,6 +159,59 @@ def load_arduino_commands(command_file):
     return commands
 
 # ============================================================
+# Obstacle avoidance
+# ============================================================
+
+def obstacle_detected():
+    """
+    Check whether there is an obstacle in front of the robot.
+    Return:
+    True  = obstacle detected
+    False = no obstacle
+    """
+
+    front_distance = latest_sonar["front"]
+
+    if front_distance != -1 and front_distance < OBSTACLE_THRESHOLD_CM:
+        print(f"Obstacle detected in front: {front_distance} cm")
+        return True
+
+    return False
+
+
+def avoid_obstacle():
+    """
+    Simple local obstacle avoidance behavior.
+    Strategy:
+    stop
+    turn right
+    move forward a little
+    turn left
+    continue original path
+    """
+    print("Avoiding obstacle...")
+
+    Bridge.call("stop_motors")
+    time.sleep(0.3)
+
+    Bridge.call("turn_right")
+    time.sleep(STEP_TURN_TIME)
+    Bridge.call("stop_motors")
+    time.sleep(STEP_STOP_TIME)
+
+    Bridge.call("move_forward")
+    time.sleep(STEP_FORWARD_TIME)
+    Bridge.call("stop_motors")
+    time.sleep(STEP_STOP_TIME)
+
+    Bridge.call("turn_left")
+    time.sleep(STEP_TURN_TIME)
+    Bridge.call("stop_motors")
+    time.sleep(STEP_STOP_TIME)
+
+    print("Obstacle avoidance completed.")
+
+# ============================================================
 # Execute movement command
 # ============================================================
 def execute_command(command, steps):
@@ -136,12 +226,15 @@ def execute_command(command, steps):
     """
     for i in range(steps):
         print(f"Step {i + 1}/{steps}: {command}")
-
         if command == "forward":
-            Bridge.call("move_forward")
-            time.sleep(STEP_FORWARD_TIME)       # 单位是s，走0.5s之后再停电机
+            if obstacle_detected():
+                avoid_obstacle()
+                continue
 
-            Bridge.call("stop_motors")          #如果没有这个，电机会一直转动
+            Bridge.call("move_forward")
+            time.sleep(STEP_FORWARD_TIME)     # Unit: second, stop the motor after running for 0.5s
+
+            Bridge.call("stop_motors")       # Without this, the motor will keep rotating.
             time.sleep(STEP_STOP_TIME)
 
         elif command == "backward":
@@ -171,7 +264,6 @@ def execute_command(command, steps):
 
         else:
             print(f"Unknown command: {command}")
-
 
 # ============================================================
 # Run autonomous path
