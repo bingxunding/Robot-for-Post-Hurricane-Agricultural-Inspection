@@ -438,6 +438,241 @@ def show_path_on_map(binary_map, path, start_point, inspection_points, output_di
 
     plt.show()
 
+def simplify_path(path):
+    """
+    Simplify A* path by keeping only key turning points.
+
+    Input:
+    path = [(x1, y1), (x2, y2), ..., (xn, yn)]
+
+    Output:
+    simplified_path = [(x1, y1), turning points..., (xn, yn)]
+
+    Meaning:
+    If the robot keeps moving in the same direction, intermediate points are removed.
+    Only the points where direction changes are kept.
+    """
+
+    if len(path) <= 2:
+        return path
+
+    simplified_path = [path[0]]
+
+    previous_direction = None
+
+    for i in range(1, len(path)):
+        previous_point = path[i - 1]
+        current_point = path[i]
+
+        dx = current_point[0] - previous_point[0]
+        dy = current_point[1] - previous_point[1]
+
+        # Normalize direction to -1, 0, or 1
+        direction = (
+            0 if dx == 0 else int(dx / abs(dx)),
+            0 if dy == 0 else int(dy / abs(dy))
+        )
+
+        if previous_direction is None:
+            previous_direction = direction
+            continue
+
+        # If direction changes, keep the previous point as a turning point
+        if direction != previous_direction:
+            simplified_path.append(previous_point)
+            previous_direction = direction
+
+    # Always keep the final target point
+    simplified_path.append(path[-1])
+
+    return simplified_path
+
+
+def get_direction_from_delta(dx, dy):
+    """
+    Convert movement delta into a rough direction label.
+
+    Because A* path is based on image pixels:
+    x increases to the right
+    y increases downward
+    """
+
+    if dx == 0 and dy < 0:
+        return "up"
+
+    if dx == 0 and dy > 0:
+        return "down"
+
+    if dx > 0 and dy == 0:
+        return "right"
+
+    if dx < 0 and dy == 0:
+        return "left"
+
+    if dx > 0 and dy < 0:
+        return "up_right"
+
+    if dx < 0 and dy < 0:
+        return "up_left"
+
+    if dx > 0 and dy > 0:
+        return "down_right"
+
+    if dx < 0 and dy > 0:
+        return "down_left"
+
+    return "unknown"
+
+
+def calculate_turn_command(current_direction, target_direction):
+    """
+    Convert direction change into a robot turn command.
+
+    This is a simplified mapping for demonstration.
+
+    In a real robot, you may need calibration:
+    - left: rotate left for a fixed time
+    - right: rotate right for a fixed time
+    - backward: turn around
+    """
+
+    directions_order = [
+        "up",
+        "up_right",
+        "right",
+        "down_right",
+        "down",
+        "down_left",
+        "left",
+        "up_left"
+    ]
+
+    if current_direction == target_direction:
+        return None
+
+    if current_direction not in directions_order or target_direction not in directions_order:
+        return None
+
+    current_index = directions_order.index(current_direction)
+    target_index = directions_order.index(target_direction)
+
+    diff = (target_index - current_index) % len(directions_order)
+
+    if diff == 0:
+        return None
+
+    # Small clockwise turn
+    if diff in [1, 2]:
+        return "right"
+
+    # Small counter-clockwise turn
+    if diff in [6, 7]:
+        return "left"
+
+    # Opposite direction
+    if diff == 4:
+        return "backward"
+
+    # Large clockwise turn
+    if diff == 3:
+        return "right"
+
+    # Large counter-clockwise turn
+    if diff == 5:
+        return "left"
+
+    return None
+
+
+def path_to_arduino_commands(simplified_path, pixels_per_step=10):
+    """
+    Convert simplified path into Arduino movement commands.
+
+    Input:
+    simplified_path = [(x1, y1), (x2, y2), ..., (xn, yn)]
+
+    Output:
+    commands = [
+        {"command": "forward", "steps": 5},
+        {"command": "left", "steps": 1},
+        {"command": "forward", "steps": 8},
+        ...
+    ]
+
+    pixels_per_step:
+    How many image pixels correspond to one robot movement step.
+    This value must be calibrated experimentally.
+    """
+
+    if len(simplified_path) <= 1:
+        return []
+
+    commands = []
+
+    current_direction = None
+
+    for i in range(1, len(simplified_path)):
+        previous_point = simplified_path[i - 1]
+        current_point = simplified_path[i]
+
+        dx = current_point[0] - previous_point[0]
+        dy = current_point[1] - previous_point[1]
+
+        target_direction = get_direction_from_delta(dx, dy)
+
+        # If this is not the first segment, turn first
+        if current_direction is not None:
+            turn_command = calculate_turn_command(current_direction, target_direction)
+
+            if turn_command:
+                commands.append({
+                    "command": turn_command,
+                    "steps": 1
+                })
+
+        # Calculate forward distance
+        distance = np.sqrt(dx * dx + dy * dy)
+
+        forward_steps = max(1, int(distance / pixels_per_step))
+
+        commands.append({
+            "command": "forward",
+            "steps": forward_steps
+        })
+
+        current_direction = target_direction
+
+    commands.append({
+        "command": "stop",
+        "steps": 1
+    })
+
+    return commands
+
+
+def save_arduino_commands(commands, output_dir):
+    """
+    Save Arduino commands to a text file.
+
+    Format:
+    command:steps
+
+    Example:
+    forward:5
+    left:1
+    forward:8
+    stop:1
+    """
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    command_path = os.path.join(output_dir, "arduino_commands.txt")
+
+    with open(command_path, "w") as file:
+        for item in commands:
+            file.write(f"{item['command']}:{item['steps']}\n")
+
+    print(f"Arduino commands saved to: {command_path}")
 
 if __name__ == "__main__":
     image_path = "pathGeneration/env.jpg"
@@ -510,6 +745,39 @@ if __name__ == "__main__":
         fmt="%d",
         delimiter=","
     )
+
+    # Simplify final path
+    simplified_path = simplify_path(final_path)
+
+    print(f"Simplified path length: {len(simplified_path)}")
+    print("Simplified path:")
+    print(simplified_path)
+
+    # Save simplified path
+    np.save(
+        os.path.join(output_dir, "simplified_path.npy"),
+        np.array(simplified_path)
+    )
+
+    np.savetxt(
+        os.path.join(output_dir, "simplified_path.txt"),
+        np.array(simplified_path),
+        fmt="%d",
+        delimiter=","
+    )
+
+    # Convert simplified path to Arduino movement commands
+    arduino_commands = path_to_arduino_commands(
+        simplified_path,
+        pixels_per_step=10
+    )
+
+    print("Arduino commands:")
+    for command in arduino_commands:
+        print(command)
+
+    # Save Arduino commands
+    save_arduino_commands(arduino_commands, output_dir)
 
     # Show path on binary map
     show_path_on_map(
