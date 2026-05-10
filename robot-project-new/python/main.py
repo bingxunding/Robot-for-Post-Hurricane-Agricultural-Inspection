@@ -17,7 +17,6 @@ Bridge.provide("print_movement",printMovement)
 def on_move(id, message):
     cmd = message.get("command")
 
-
     try:
         if cmd == "forward":
             ui.send_message("debug", {"text": "Bridge: forward"})
@@ -51,6 +50,71 @@ def on_move(id, message):
         
 ui = WebUI()
 ui.on_message("move", on_move)
+
+def execute_command(command, steps):
+    for i in range(steps):
+        if command == "forward":
+            Bridge.call("move_forward")
+            time.sleep(0.5)
+            Bridge.call("stop_motors")
+            time.sleep(0.2)
+
+        elif command == "backward":
+            Bridge.call("move_backward")
+            time.sleep(0.5)
+            Bridge.call("stop_motors")
+            time.sleep(0.2)
+
+        elif command == "left":
+            Bridge.call("turn_left")
+            time.sleep(0.4)
+            Bridge.call("stop_motors")
+            time.sleep(0.2)
+
+        elif command == "right":
+            Bridge.call("turn_right")
+            time.sleep(0.4)
+            Bridge.call("stop_motors")
+            time.sleep(0.2)
+
+        elif command == "stop":
+            Bridge.call("stop_motors")
+            time.sleep(0.5)
+
+def load_arduino_commands(command_file):
+    commands = []
+
+    with open(command_file, "r") as file:
+        for line in file:
+            line = line.strip()
+
+            if not line:
+                continue
+
+            command, steps = line.split(":")
+            commands.append({
+                "command": command,
+                "steps": int(steps)
+            })
+
+    return commands
+
+def run_autonomous_path(command_file):
+    commands = load_arduino_commands(command_file)
+
+    print("Autonomous path started.")
+    print(f"Total commands: {len(commands)}")
+
+    for item in commands:
+        command = item["command"]
+        steps = item["steps"]
+
+        print(f"Executing: {command}:{steps}")
+
+        execute_command(command, steps)
+
+    Bridge.call("stop_motors")
+    print("Autonomous path completed.")
 
 def on_sonar_data1(msg):
     print("SONAR1:", msg)
