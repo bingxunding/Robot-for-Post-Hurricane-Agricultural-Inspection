@@ -9,7 +9,7 @@ def load_base_map_config(config_path):
     Load base map configuration from JSON file.
 
     The JSON file must already exist and contain these required fields:
-    - image_path
+    - scale_image_path
     - real_scale_bar_m
     - robot_width_m
     - safety_margin_m
@@ -20,7 +20,7 @@ def load_base_map_config(config_path):
             f"Configuration file not found: {config_path}\n"
             "Please create map_config.json first with these fields:\n"
             "{\n"
-            '    "image_path": "pathGeneration/env-extra.jpg",\n'
+            '    "scale_image_path": "pathGeneration/env-extra.jpg",\n'
             '    "real_scale_bar_m": 30,\n'
             '    "robot_width_m": 0.4,\n'
             '    "safety_margin_m": 0.2\n'
@@ -31,7 +31,7 @@ def load_base_map_config(config_path):
         config = json.load(file)
 
     required_fields = [
-        "image_path",
+        "scale_image_path",
         "real_scale_bar_m",
         "robot_width_m",
         "safety_margin_m"
@@ -47,7 +47,7 @@ def load_base_map_config(config_path):
         raise KeyError(
             f"Missing required fields in {config_path}: {missing_fields}\n"
             "The initial map_config.json must contain:\n"
-            "- image_path\n"
+            "- scale_image_path\n"
             "- real_scale_bar_m\n"
             "- robot_width_m\n"
             "- safety_margin_m"
@@ -76,7 +76,7 @@ def calculate_map_config_from_scale_bar(config_path):
 
     config = load_base_map_config(config_path)
 
-    image_path = config["image_path"]
+    image_path = config["scale_image_path"]
     real_scale_bar_m = config["real_scale_bar_m"]
     robot_width_m = config["robot_width_m"]
     safety_margin_m = config["safety_margin_m"]

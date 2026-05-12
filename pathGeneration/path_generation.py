@@ -124,7 +124,7 @@ def inflate_obstacles(occupancy_grid, inflation_radius_pixels):
 
 
 def preprocess_real_environment_image(
-    image_path,
+    planning_image_path,
     output_dir="output_preprocessing",
     resize_width=800,
     blur_kernel=5,
@@ -140,10 +140,10 @@ def preprocess_real_environment_image(
     """
 
     # 1. Read image
-    original_bgr = cv2.imread(image_path)
+    original_bgr = cv2.imread(planning_image_path)
 
     if original_bgr is None:
-        raise FileNotFoundError(f"Cannot read image: {image_path}")
+        raise FileNotFoundError(f"Cannot read image: {planning_image_path}")
 
     # Convert BGR to RGB for displaying
     original_rgb = cv2.cvtColor(original_bgr, cv2.COLOR_BGR2RGB)
@@ -739,7 +739,7 @@ if __name__ == "__main__":
     config_path = os.path.join(output_dir, "map_config.json")
     map_config = load_map_config(config_path)
 
-    image_path = map_config["image_path"]
+    image_path = map_config["planning_image_path"]
     inflation_radius_pixels = map_config["inflation_radius_pixels"]
 
     print("Loaded map configuration:")
@@ -747,7 +747,7 @@ if __name__ == "__main__":
     print(f"Inflation radius: {inflation_radius_pixels} pixels")
 
     binary_map, occupancy_grid = preprocess_real_environment_image(
-        image_path=image_path,
+        planning_image_path=image_path,
         output_dir=output_dir,
         resize_width=800,
         blur_kernel=5,
