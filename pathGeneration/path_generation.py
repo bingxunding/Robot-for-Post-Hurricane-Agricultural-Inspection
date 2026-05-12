@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import os
 import heapq
 import random
+import json
 
 
 def show_and_save(title, image, output_dir):
@@ -51,6 +52,75 @@ def show_comparison(original_image, processed_image, output_dir):
     plt.savefig(comparison_path, dpi=300)
 
     plt.show()
+
+
+def load_map_config(config_path):
+    """
+    Load map configuration from JSON file.
+
+    Required field:
+    - inflation_radius_pixels
+    """
+
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(
+            f"Map configuration file not found: {config_path}\n"
+            "Please run configuration_generation.py first."
+        )
+
+    with open(config_path, "r") as file:
+        config = json.load(file)
+
+    if "inflation_radius_pixels" not in config:
+        raise KeyError(
+            f"Missing 'inflation_radius_pixels' in {config_path}.\n"
+            "Please run configuration_generation.py to generate this value."
+        )
+
+    return config
+
+
+def inflate_obstacles(occupancy_grid, inflation_radius_pixels):
+    """
+    Inflate obstacles according to robot size and safety margin.
+
+    occupancy_grid:
+    0 = free space
+    1 = obstacle
+
+    inflation_radius_pixels:
+    Number of pixels used to expand obstacle areas.
+
+    Return:
+    inflated_grid:
+    0 = free space
+    1 = inflated obstacle
+    """
+
+    if inflation_radius_pixels <= 0:
+        return occupancy_grid
+
+    # Convert obstacle cells to mask
+    # 255 = obstacle
+    # 0 = free space
+    obstacle_mask = np.where(occupancy_grid == 1, 255, 0).astype(np.uint8)
+
+    kernel_size = 2 * inflation_radius_pixels + 1
+
+    kernel = cv2.getStructuringElement(
+        cv2.MORPH_ELLIPSE,
+        (kernel_size, kernel_size)
+    )
+
+    inflated_obstacle_mask = cv2.dilate(
+        obstacle_mask,
+        kernel,
+        iterations=1
+    )
+
+    inflated_grid = np.where(inflated_obstacle_mask == 255, 1, 0)
+
+    return inflated_grid
 
 
 def preprocess_real_environment_image(
@@ -194,18 +264,8 @@ def keep_largest_free_component(occupancy_grid):
     occupancy_grid:
     0 = free space
     1 = obstacle
-
-    Return:
-    - largest_component_grid:
-      0 = largest free space
-      1 = obstacle or other disconnected free areas
-
-    - largest_free_mask:
-      255 = largest free space
-      0 = obstacle
     """
 
-    # Free space mask: 255 = free, 0 = obstacle
     free_mask = np.where(occupancy_grid == 0, 255, 0).astype(np.uint8)
 
     num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(
@@ -381,8 +441,6 @@ def find_bottom_right_free_point(occupancy_grid):
 def select_random_inspection_points_from_path(path, number_of_points=3):
     """
     Select random inspection points from an existing feasible path.
-
-    This ensures all inspection points are on free space.
     """
 
     if len(path) <= 2:
@@ -430,7 +488,7 @@ def show_path_on_map(binary_map, path, start_point, inspection_points, output_di
 
     plt.figure(figsize=(12, 6))
     plt.imshow(path_image)
-    plt.title("Planned Path on Largest Free-Space Component")
+    plt.title("Planned Path on Inflated Largest Free-Space Component")
     plt.axis("off")
 
     output_path = os.path.join(output_dir, "planned_path.png")
@@ -674,9 +732,19 @@ def save_arduino_commands(commands, output_dir):
 
     print(f"Arduino commands saved to: {command_path}")
 
+
 if __name__ == "__main__":
-    image_path = "pathGeneration/env.jpg"
     output_dir = "output_preprocessing"
+
+    config_path = os.path.join(output_dir, "map_config.json")
+    map_config = load_map_config(config_path)
+
+    image_path = map_config["image_path"]
+    inflation_radius_pixels = map_config["inflation_radius_pixels"]
+
+    print("Loaded map configuration:")
+    print(f"Image path: {image_path}")
+    print(f"Inflation radius: {inflation_radius_pixels} pixels")
 
     binary_map, occupancy_grid = preprocess_real_environment_image(
         image_path=image_path,
@@ -688,7 +756,33 @@ if __name__ == "__main__":
         use_hsv_correction=True
     )
 
-    # Keep only the largest connected free-space area
+    # Inflate obstacles according to robot size and safety margin
+    occupancy_grid = inflate_obstacles(
+        occupancy_grid,
+        inflation_radius_pixels=inflation_radius_pixels
+    )
+
+    # Save inflated occupancy grid
+    np.save(
+        os.path.join(output_dir, "inflated_occupancy_grid.npy"),
+        occupancy_grid
+    )
+
+    inflated_obstacle_visualization = np.where(
+        occupancy_grid == 0,
+        255,
+        0
+    ).astype(np.uint8)
+
+    cv2.imwrite(
+        os.path.join(output_dir, "inflated_binary_map.png"),
+        inflated_obstacle_visualization
+    )
+
+    print("Obstacle inflation completed.")
+    print(f"Inflation radius used: {inflation_radius_pixels} pixels")
+
+    # Keep only the largest connected free-space area after obstacle inflation
     occupancy_grid, largest_free_mask = keep_largest_free_component(occupancy_grid)
 
     # Update binary map for visualization
