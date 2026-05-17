@@ -69,7 +69,6 @@ Bridge.provide("print_movement", printMovement)
 # Sonar part
 # ============================================================
 def on_sonar_data1(msg):
-def on_sonar_data1(msg):
     """
     Sonar 1 is treated as the front ultrasonic sensor.
     """
