@@ -1,4 +1,4 @@
-from arduino.app_utils import *
+# from arduino.app_utils import *
 import time
 import threading
 import os
@@ -51,7 +51,7 @@ def on_handshake_complete(msg):
         )
         thread.start()
 
-Bridge.provide("handshake_complete", on_handshake_complete)
+# Bridge.provide("handshake_complete", on_handshake_complete)
 
 
 def printMovement(direction):
@@ -63,12 +63,11 @@ def printMovement(direction):
 
     print("Arduino movement:", direction)
 
-Bridge.provide("print_movement", printMovement)
+# Bridge.provide("print_movement", printMovement)
 
 # ============================================================
 # Sonar part
 # ============================================================
-def on_sonar_data1(msg):
 def on_sonar_data1(msg):
     """
     Sonar 1 is treated as the front ultrasonic sensor.
@@ -104,9 +103,9 @@ def on_sonar_data3(msg):
 
     print("SONAR3 / RIGHT:", msg)
 
-Bridge.provide("sonar_data1", on_sonar_data1)
-Bridge.provide("sonar_data2", on_sonar_data2)
-Bridge.provide("sonar_data3", on_sonar_data3)
+# Bridge.provide("sonar_data1", on_sonar_data1)
+# Bridge.provide("sonar_data2", on_sonar_data2)
+# Bridge.provide("sonar_data3", on_sonar_data3)
 
 
 # ============================================================
@@ -191,22 +190,22 @@ def avoid_obstacle():
     """
     print("Avoiding obstacle...")
 
-    Bridge.call("stop_motors")
+    print("LOCAL TEST: stop_motors")
     time.sleep(0.3)
 
-    Bridge.call("turn_right")
+    print("LOCAL TEST: turn_right")
     time.sleep(STEP_TURN_TIME)
-    Bridge.call("stop_motors")
+    print("LOCAL TEST: stop_motors")
     time.sleep(STEP_STOP_TIME)
 
-    Bridge.call("move_forward")
+    print("LOCAL TEST: move_forward")
     time.sleep(STEP_FORWARD_TIME)
-    Bridge.call("stop_motors")
+    print("LOCAL TEST: stop_motors")
     time.sleep(STEP_STOP_TIME)
 
-    Bridge.call("turn_left")
+    print("LOCAL TEST: turn_left")
     time.sleep(STEP_TURN_TIME)
-    Bridge.call("stop_motors")
+    print("LOCAL TEST: stop_motors")
     time.sleep(STEP_STOP_TIME)
 
     print("Obstacle avoidance completed.")
@@ -231,35 +230,35 @@ def execute_command(command, steps):
                 avoid_obstacle()
                 continue
 
-            Bridge.call("move_forward")
+            print("LOCAL TEST: move_forward")
             time.sleep(STEP_FORWARD_TIME)     # Unit: second, stop the motor after running for 0.5s
 
-            Bridge.call("stop_motors")       # Without this, the motor will keep rotating.
+            print("LOCAL TEST: stop_motors")       # Without this, the motor will keep rotating.
             time.sleep(STEP_STOP_TIME)
 
         elif command == "backward":
-            Bridge.call("move_backward")
+            print("LOCAL TEST: move_backward")
             time.sleep(STEP_FORWARD_TIME)
 
-            Bridge.call("stop_motors")
+            print("LOCAL TEST: stop_motors")
             time.sleep(STEP_STOP_TIME)
 
         elif command == "left":
-            Bridge.call("turn_left")
+            print("LOCAL TEST: turn_left")
             time.sleep(STEP_TURN_TIME)
 
-            Bridge.call("stop_motors")
+            print("LOCAL TEST: stop_motors")
             time.sleep(STEP_STOP_TIME)
 
         elif command == "right":
-            Bridge.call("turn_right")
+            print("LOCAL TEST: turn_right")
             time.sleep(STEP_TURN_TIME)
 
-            Bridge.call("stop_motors")
+            print("LOCAL TEST: stop_motors")
             time.sleep(STEP_STOP_TIME)
 
         elif command == "stop":
-            Bridge.call("stop_motors")
+            print("LOCAL TEST: stop_motors")
             time.sleep(0.5)
 
         else:
@@ -279,7 +278,7 @@ def run_autonomous_path():
 
     if not os.path.exists(COMMAND_FILE):
         print(f"Command file not found: {COMMAND_FILE}")
-        Bridge.call("stop_motors")
+        print("LOCAL TEST: stop_motors")
         return
 
     try:
@@ -304,7 +303,7 @@ def run_autonomous_path():
             print(f"\nExecuting command: {command}:{steps}")
             execute_command(command, steps)
 
-        Bridge.call("stop_motors")
+        print("LOCAL TEST: stop_motors")
 
         print("\n====================================")
         print("Autonomous path completed")
@@ -312,12 +311,17 @@ def run_autonomous_path():
 
     except Exception as e:
         print(f"Autonomous control error: {e}")
-        Bridge.call("stop_motors")
+        print("LOCAL TEST: stop_motors")
 
 # ============================================================
 # App entry
 # ============================================================
 print("Auto control Python file started.")
-print("Waiting for Arduino handshake...")
+print("Running in local Mac VS Code test mode.")
+print("BASE_DIR:", BASE_DIR)
+print("COMMAND_FILE:", COMMAND_FILE)
+print("Command file exists:", os.path.exists(COMMAND_FILE))
 
-App.run()
+run_autonomous_path()
+
+# App.run()

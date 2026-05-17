@@ -1,0 +1,14 @@
+forward:1
+right:1
+forward:2
+left:1
+forward:1
+left:1
+forward:1
+right:1
+forward:1
+left:1
+forward:21
+left:1
+forward:4
+stop:1
