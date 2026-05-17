@@ -1,4 +1,4 @@
-name: Copy of robot project
+name: robot-project-new
 description: Blink an LED via microcontroller using RPC calls
 ports: []
 bricks:
