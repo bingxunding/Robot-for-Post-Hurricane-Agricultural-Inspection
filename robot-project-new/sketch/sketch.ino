@@ -191,7 +191,13 @@ Bridge.notify("handshake_complete", "arduino_ready");
 }
 
 void loop() {
-  int d1 = -1,d2 = -1,d3 = -1;
+  if (millis() - lastHandshakeTime > 1000) {
+    Bridge.notify("handshake_complete", "arduino_ready");
+    lastHandshakeTime = millis();
+  }
+
+  int d1 = -1, d2 = -1, d3 = -1;
+
   d1 = sonar1.getDistance();
   if (d1!=-1){
     Bridge.notify("sonar_data1",String(d1));
