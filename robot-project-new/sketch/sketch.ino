@@ -190,6 +190,7 @@ Bridge.notify("handshake_complete", "arduino_ready");
 
 }
 
+unsigned long lastHandshakeTime = 0;
 void loop() {
   if (millis() - lastHandshakeTime > 1000) {
     Bridge.notify("handshake_complete", "arduino_ready");
