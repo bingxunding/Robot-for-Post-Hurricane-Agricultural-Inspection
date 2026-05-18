@@ -1,4 +1,12 @@
 {
+    "control_mode": "remote",
+
+    "command_file_path": "input_data/arduino_commands.txt",
+    "step_forward_time": 5,
+    "step_turn_time": 4,
+    "step_stop_time": 2,
+    "obstacle_threshold_cm": 20,
+  
     "scale_image_path": "pathGeneration/env-extra.jpg",
     "planning_image_path": "pathGeneration/env.jpg",
     "real_scale_bar_m": 30,

@@ -65,4 +65,6 @@ Bridge.provide("sonar_data1", on_sonar_data1)
 Bridge.provide("sonar_data2", on_sonar_data2)
 Bridge.provide("sonar_data3", on_sonar_data3)
 
-App.run()
+def start():
+    print("Remote control Python file started.")
+    App.run()

@@ -316,7 +316,7 @@ def run_autonomous_path():
 # ============================================================
 # App entry
 # ============================================================
-print("Auto control Python file started.")
-print("Waiting for Arduino handshake...")
-
-App.run()
+def start():
+    print("Auto control Python file started.")
+    print("Waiting for Arduino handshake...")
+    App.run()
