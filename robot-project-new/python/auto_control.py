@@ -298,6 +298,7 @@ ANGLE_IN_RESPECT_STARTING_POS = 0 #<--rotation value you need
 #gyro_values = [x,y,z], after the filter, so no need for biases and stds
 def modify_inclination(gyro_values):
     global FORWARD_INCLINATION
+    global ANGLE_IN_RESPECT_STARTING_POS
     
     delta_angle_x = gyro_values[0] * FREQUENCY_IMU_DATA
     delta_angle_y = gyro_values[1] * FREQUENCY_IMU_DATA
@@ -416,6 +417,9 @@ def getIMU(text):
     if CALIBRATED:
         
         parsed_data = parseIMUdata(text)
+        if parsed_data is None:
+            print("Invalid IMU data:", text)
+            return
         
         acc1Y=parsed_data[0][1]
         print("pre filter accelY "+str(acc1Y))
@@ -450,7 +454,7 @@ def getIMU(text):
         else:
             print("Finished calibrating")
             CALIBRATED = True
-            GYRO_BIASES, ACCEL_BIASES, GYRO_STDS, ACCEL_STDS = calibrate(ACCEL_BATCH, GYRO_BATCH)
+            GYRO_BIASES, ACCEL_BIASES, GYRO_STDS, ACCEL_STDS = calibrate(GYRO_BATCH, ACCEL_BATCH)
             print(GYRO_BIASES)
             print("\n")
             print(ACCEL_BIASES)
