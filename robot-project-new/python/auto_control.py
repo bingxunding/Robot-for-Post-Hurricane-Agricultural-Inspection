@@ -27,6 +27,7 @@ obstacle_detected_flag = False
 autonomous_started = False
 
 TURN_TIMEOUT = 5.0
+USE_IMU = True
 
 # ============================================================
 # Arduino callback functions
@@ -160,12 +161,28 @@ def avoid_obstacle():
     print("Avoiding obstacle...")
     Bridge.call("stop_motors")
     time.sleep(0.3)
-    turn_right_by_angle(45)
+
+    if USE_IMU:
+        turn_right_by_angle(45)
+    else:
+        Bridge.call("turn_right")
+        time.sleep(STEP_TURN_TIME)
+        Bridge.call("stop_motors")
+        time.sleep(STEP_STOP_TIME)
+
     Bridge.call("move_forward")
     time.sleep(STEP_FORWARD_TIME)
     Bridge.call("stop_motors")
     time.sleep(STEP_STOP_TIME)
-    turn_left_by_angle(45)
+
+    if USE_IMU:
+        turn_left_by_angle(45)
+    else:
+        Bridge.call("turn_left")
+        time.sleep(STEP_TURN_TIME)
+        Bridge.call("stop_motors")
+        time.sleep(STEP_STOP_TIME)
+
     print("Obstacle avoidance completed.")
 
 # ============================================================
@@ -274,10 +291,22 @@ def execute_command(command, steps):
             time.sleep(STEP_STOP_TIME)
 
         elif command == "left":
-             turn_left_by_angle(TURN_ANGLE_PER_STEP)
+            if USE_IMU:
+                turn_left_by_angle(TURN_ANGLE_PER_STEP)
+            else:
+                Bridge.call("turn_left")
+                time.sleep(STEP_TURN_TIME)
+                Bridge.call("stop_motors")
+                time.sleep(STEP_STOP_TIME)
 
         elif command == "right":
-            turn_right_by_angle(TURN_ANGLE_PER_STEP)
+            if USE_IMU:
+                turn_right_by_angle(TURN_ANGLE_PER_STEP)
+            else:
+                Bridge.call("turn_right")
+                time.sleep(STEP_TURN_TIME)
+                Bridge.call("stop_motors")
+                time.sleep(STEP_STOP_TIME)
 
         elif command == "stop":
             Bridge.call("stop_motors")
@@ -294,12 +323,14 @@ def run_autonomous_path():
     Main autonomous control logic.
     It reads arduino_commands.txt and sends movement commands to sketch.ino.
     """
+    global USE_IMU
     calibration_start_time = time.time()
     calibration_timeout = 30
     while not CALIBRATED:
         print("Waiting for IMU calibration before autonomous path...")
         if time.time() - calibration_start_time > calibration_timeout:
             print("IMU calibration timeout. Starting with time-based turning fallback.")
+            USE_IMU = False
             break
         time.sleep(1)
 
@@ -480,7 +511,6 @@ def getIMU(text):
     global ACCEL_STDS
 
     if CALIBRATED:
-        
         parsed_data = parseIMUdata(text)
         if parsed_data is None:
             print("Invalid IMU data:", text)
