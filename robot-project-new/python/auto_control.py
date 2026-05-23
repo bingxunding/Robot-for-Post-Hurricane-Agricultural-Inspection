@@ -3,6 +3,7 @@ import time
 import threading
 import os
 import numpy as np
+import math
 
 # ============================================================
 # Configuration
@@ -24,6 +25,8 @@ STEP_STOP_TIME = 0.2
 obstacle_detected_flag = False
 
 autonomous_started = False
+
+TURN_TIMEOUT = 5.0
 
 # ============================================================
 # Arduino callback functions
@@ -155,26 +158,87 @@ def avoid_obstacle():
     continue original path
     """
     print("Avoiding obstacle...")
-
     Bridge.call("stop_motors")
     time.sleep(0.3)
-
-    Bridge.call("turn_right")
-    time.sleep(STEP_TURN_TIME)
-    Bridge.call("stop_motors")
-    time.sleep(STEP_STOP_TIME)
-
+    turn_right_by_angle(45)
     Bridge.call("move_forward")
     time.sleep(STEP_FORWARD_TIME)
     Bridge.call("stop_motors")
     time.sleep(STEP_STOP_TIME)
+    turn_left_by_angle(45)
+    print("Obstacle avoidance completed.")
 
-    Bridge.call("turn_left")
-    time.sleep(STEP_TURN_TIME)
+# ============================================================
+# IMU
+# ============================================================
+current_yaw_deg = 0.0
+last_gyro_z = 0.0
+imu_lock = threading.Lock()
+TURN_ANGLE_PER_STEP = 90
+
+def reset_yaw():
+    global current_yaw_deg
+
+    with imu_lock:
+        current_yaw_deg = 0.0
+
+
+def get_yaw():
+    with imu_lock:
+        return current_yaw_deg
+
+
+def update_yaw_from_gyro(gyro_z):
+    global current_yaw_deg
+    global last_gyro_z
+
+    delta_yaw_rad = gyro_z * FREQUENCY_IMU_DATA
+    delta_yaw_deg = math.degrees(delta_yaw_rad)
+
+    with imu_lock:
+        current_yaw_deg += delta_yaw_deg
+        last_gyro_z = gyro_z
+
+def turn_right_by_angle(target_angle_deg=90):
+    print(f"Turning right by IMU angle: {target_angle_deg} degrees")
+
+    reset_yaw()
+
+    Bridge.call("turn_right")
+
+    start_time = time.time()
+
+    while abs(get_yaw()) < target_angle_deg:
+        if time.time() - start_time > TURN_TIMEOUT:
+            print("Turn right timeout. Stopping motors.")
+            break
+        time.sleep(0.02)
+
     Bridge.call("stop_motors")
     time.sleep(STEP_STOP_TIME)
 
-    print("Obstacle avoidance completed.")
+    print("Right turn completed. Final yaw:", get_yaw())
+
+
+def turn_left_by_angle(target_angle_deg=90):
+    print(f"Turning left by IMU angle: {target_angle_deg} degrees")
+
+    reset_yaw()
+
+    Bridge.call("turn_left")
+
+    start_time = time.time()
+
+    while abs(get_yaw()) < target_angle_deg:
+        if time.time() - start_time > TURN_TIMEOUT:
+            print("Turn left timeout. Stopping motors.")
+            break
+        time.sleep(0.02)
+
+    Bridge.call("stop_motors")
+    time.sleep(STEP_STOP_TIME)
+
+    print("Left turn completed. Final yaw:", get_yaw())
 
 # ============================================================
 # Execute movement command
@@ -210,18 +274,10 @@ def execute_command(command, steps):
             time.sleep(STEP_STOP_TIME)
 
         elif command == "left":
-            Bridge.call("turn_left")
-            time.sleep(STEP_TURN_TIME)
-
-            Bridge.call("stop_motors")
-            time.sleep(STEP_STOP_TIME)
+             turn_left_by_angle(TURN_ANGLE_PER_STEP)
 
         elif command == "right":
-            Bridge.call("turn_right")
-            time.sleep(STEP_TURN_TIME)
-
-            Bridge.call("stop_motors")
-            time.sleep(STEP_STOP_TIME)
+            turn_right_by_angle(TURN_ANGLE_PER_STEP)
 
         elif command == "stop":
             Bridge.call("stop_motors")
@@ -238,6 +294,15 @@ def run_autonomous_path():
     Main autonomous control logic.
     It reads arduino_commands.txt and sends movement commands to sketch.ino.
     """
+    calibration_start_time = time.time()
+    calibration_timeout = 30
+    while not CALIBRATED:
+        print("Waiting for IMU calibration before autonomous path...")
+        if time.time() - calibration_start_time > calibration_timeout:
+            print("IMU calibration timeout. Starting with time-based turning fallback.")
+            break
+        time.sleep(1)
+
     print("====================================")
     print("Autonomous control started")
     print("====================================")
@@ -442,8 +507,9 @@ def getIMU(text):
         print("gyro values:\n")
         print(filtered_data[1])
         modify_inclination(filtered_data[1])
+        # Use gyro_z to update yaw angle for IMU-based turning
+        update_yaw_from_gyro(filtered_data[1][2])
         print("updated inclination: " + str(FORWARD_INCLINATION) +"\n")
-        
         
     else:
         print("Calibrating..." + str(len(GYRO_BATCH)))
