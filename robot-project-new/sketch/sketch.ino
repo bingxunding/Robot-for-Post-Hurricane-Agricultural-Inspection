@@ -1,4 +1,7 @@
 #include <Arduino_RouterBridge.h>
+#include <Adafruit_MPU6050.h>
+#include <Adafruit_Sensor.h>
+#include <Wire.h>
 #include <Servo.h>
 
 const int ENA = 3;   
@@ -27,7 +30,26 @@ const int trigPin2 = 11;
 const int echoPin2 = 12;
 const int trigPin3 = 8;
 const int echoPin3 = 13;
-int distance;      
+int distance;
+
+Adafruit_MPU6050 mpu;
+
+int FREQUENCY = 500; //500ms
+
+void send_IMU_data(){
+  sensors_event_t a, g, temp;
+  mpu.getEvent(&a, &g, &temp);
+
+  String data = String(a.acceleration.x) + "," + 
+              String(a.acceleration.y) + "," + 
+              String(a.acceleration.z) + "," +
+              String(g.gyro.x) + "," +
+              String(g.gyro.y) + "," +
+              String(g.gyro.z);
+
+  Bridge.notify("get_imu",data);
+}
+
 class Sonar {
   private:
 
@@ -57,15 +79,14 @@ class Sonar {
     int getDistance (){
       long duration;
       int distance;
-    
       digitalWrite(trigPin, LOW);
       delayMicroseconds(2);
       digitalWrite(trigPin, HIGH);
       delayMicroseconds(10);
       digitalWrite(trigPin, LOW);
-  
-      duration = pulseIn(echoPin, HIGH, 30000);
 
+      duration = pulseIn(echoPin, HIGH, 30000); //<-- if the sonars are not plugged in, this code is blocking
+      
       if (duration == 0) {
         return -1;
       }
@@ -175,6 +196,11 @@ int get_sonar_2();
 int get_sonar_3();
 void setup() {
 
+  Serial.begin(9600);
+  delay(3000);
+  Wire.begin();
+  mpu.begin();
+  
   pinMode(ENA, OUTPUT);
   pinMode(IN1, OUTPUT);
   pinMode(IN2, OUTPUT);
@@ -192,19 +218,16 @@ void setup() {
 
   Bridge.begin();
   stop_motors();
-
   
-Bridge.provide("move_forward", move_forward);
-Bridge.provide("move_backward", move_backward);
-Bridge.provide("turn_left", turn_left);
-Bridge.provide("turn_right", turn_right);
-Bridge.provide("stop_motors", stop_motors);
-
-Bridge.provide("setServoSpeed", setServoSpeed);
-Bridge.provide("stopServoMotor", stopServoMotor);
+  Bridge.provide("move_forward", move_forward);
+  Bridge.provide("move_backward", move_backward);
+  Bridge.provide("turn_left", turn_left);
+  Bridge.provide("turn_right", turn_right);
+  Bridge.provide("stop_motors", stop_motors);
   
-Bridge.notify("handshake_complete", "arduino_ready");
-
+  Bridge.provide("setServoSpeed", setServoSpeed);
+  Bridge.provide("stopServoMotor", stopServoMotor);
+  Bridge.notify("handshake_complete", "arduino_ready");
 }
 
 unsigned long lastHandshakeTime = 0;
@@ -213,10 +236,12 @@ void loop() {
     Bridge.notify("handshake_complete", "arduino_ready");
     lastHandshakeTime = millis();
   }
-
-  detect_obstacle();
-  // maybe it is too short time????
-  delay(10);  
+  
+  //detect_obstacle();
+  send_IMU_data();
+  
+  // frequency where you sample imu and sonar
+  delay(FREQUENCY);  
 }
 
 void setServoSpeed(int speed){
