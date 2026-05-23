@@ -28,6 +28,15 @@ autonomous_started = False
 
 TURN_TIMEOUT = 5.0
 USE_IMU = True
+# One forward/backward step target distance.
+# From map scale:
+# meters_per_pixel = 0.08063467359130036
+# pixels_per_step = 10
+# 10 * 0.08063467359130036 = 0.8063467359130036 m
+MOVE_DISTANCE_PER_STEP = 0.8063467359130036
+
+# Safety timeout for one forward/backward movement
+MOVE_TIMEOUT = 3.0
 
 # ============================================================
 # Arduino callback functions
@@ -192,6 +201,7 @@ current_yaw_deg = 0.0
 last_gyro_z = 0.0
 imu_lock = threading.Lock()
 TURN_ANGLE_PER_STEP = 90
+current_displacement = 0.0
 
 def reset_yaw():
     global current_yaw_deg
@@ -204,6 +214,23 @@ def get_yaw():
     with imu_lock:
         return current_yaw_deg
 
+def reset_motion_estimation():
+    """
+    Reset velocity and displacement estimation before each forward/backward step.
+    """
+    global CURRENT_VELOCITY
+    global current_displacement
+
+    with imu_lock:
+        CURRENT_VELOCITY = 0.0
+        current_displacement = 0.0
+
+def get_displacement():
+    """
+    Return current estimated displacement.
+    """
+    with imu_lock:
+        return current_displacement
 
 def update_yaw_from_gyro(gyro_z):
     global current_yaw_deg
@@ -215,6 +242,27 @@ def update_yaw_from_gyro(gyro_z):
     with imu_lock:
         current_yaw_deg += delta_yaw_deg
         last_gyro_z = gyro_z
+
+def update_displacement_from_accel(acc_y):
+    """
+    Estimate forward/backward displacement from Y-axis acceleration.
+
+    acc_y is expected to be in m/s^2.
+    FREQUENCY_IMU_DATA is the sampling interval in seconds.
+
+    This is a simple integration:
+    delta_s = v * dt + 0.5 * a * dt^2
+    v = v + a * dt
+    """
+    global CURRENT_VELOCITY
+    global current_displacement
+
+    dt = FREQUENCY_IMU_DATA
+
+    with imu_lock:
+        delta_s = CURRENT_VELOCITY * dt + 0.5 * acc_y * dt * dt
+        CURRENT_VELOCITY += acc_y * dt
+        current_displacement += delta_s
 
 def turn_right_by_angle(target_angle_deg=90):
     print(f"Turning right by IMU angle: {target_angle_deg} degrees")
@@ -257,6 +305,60 @@ def turn_left_by_angle(target_angle_deg=90):
 
     print("Left turn completed. Final yaw:", get_yaw())
 
+def move_forward_by_distance(target_distance=MOVE_DISTANCE_PER_STEP):
+    """
+    Move forward until the IMU-estimated displacement reaches target_distance.
+    This is an IMU-assisted movement, with timeout protection.
+    """
+    print(f"Moving forward by IMU distance: {target_distance} m")
+
+    reset_motion_estimation()
+
+    Bridge.call("move_forward")
+
+    start_time = time.time()
+
+    while abs(get_displacement()) < target_distance:
+        if obstacle_detected():
+            print("Obstacle detected during IMU forward movement.")
+            break
+
+        if time.time() - start_time > MOVE_TIMEOUT:
+            print("Forward movement timeout. Stopping motors.")
+            break
+
+        time.sleep(0.02)
+
+    Bridge.call("stop_motors")
+    time.sleep(STEP_STOP_TIME)
+
+    print("Forward movement completed. Estimated displacement:", get_displacement())
+
+def move_backward_by_distance(target_distance=MOVE_DISTANCE_PER_STEP):
+    """
+    Move backward until the IMU-estimated displacement reaches target_distance.
+    This is an IMU-assisted movement, with timeout protection.
+    """
+    print(f"Moving backward by IMU distance: {target_distance} m")
+
+    reset_motion_estimation()
+
+    Bridge.call("move_backward")
+
+    start_time = time.time()
+
+    while abs(get_displacement()) < target_distance:
+        if time.time() - start_time > MOVE_TIMEOUT:
+            print("Backward movement timeout. Stopping motors.")
+            break
+
+        time.sleep(0.02)
+
+    Bridge.call("stop_motors")
+    time.sleep(STEP_STOP_TIME)
+
+    print("Backward movement completed. Estimated displacement:", get_displacement())
+
 # ============================================================
 # Execute movement command
 # ============================================================
@@ -276,19 +378,22 @@ def execute_command(command, steps):
             if obstacle_detected():
                 avoid_obstacle()
                 continue
-
-            Bridge.call("move_forward")
-            time.sleep(STEP_FORWARD_TIME)     # Unit: second, stop the motor after running for 0.5s
-
-            Bridge.call("stop_motors")       # Without this, the motor will keep rotating.
-            time.sleep(STEP_STOP_TIME)
+            if USE_IMU:
+                move_forward_by_distance(MOVE_DISTANCE_PER_STEP)
+            else:
+                Bridge.call("move_forward")
+                time.sleep(STEP_FORWARD_TIME)
+                Bridge.call("stop_motors")
+                time.sleep(STEP_STOP_TIME)
 
         elif command == "backward":
-            Bridge.call("move_backward")
-            time.sleep(STEP_FORWARD_TIME)
-
-            Bridge.call("stop_motors")
-            time.sleep(STEP_STOP_TIME)
+            if USE_IMU:
+                move_backward_by_distance(MOVE_DISTANCE_PER_STEP)
+            else:
+                Bridge.call("move_backward")
+                time.sleep(STEP_FORWARD_TIME)
+                Bridge.call("stop_motors")
+                time.sleep(STEP_STOP_TIME)
 
         elif command == "left":
             if USE_IMU:
@@ -528,7 +633,8 @@ def getIMU(text):
         print("after angle calculation delta: " + str(delta_movement) +"\n")
         
         print("accelY "+str(accY))
-        CURRENT_VELOCITY = CURRENT_VELOCITY + accY*FREQUENCY_IMU_DATA
+        # Update velocity and displacement using acceleration
+        update_displacement_from_accel(accY)
         print("current velocity: " + str(CURRENT_VELOCITY))
         print("")
         print("\n")
