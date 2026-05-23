@@ -20,14 +20,7 @@ STEP_TURN_TIME = 0.4
 STEP_STOP_TIME = 0.2
 
 # Obstacle avoidance configuration
-OBSTACLE_THRESHOLD_CM = 20
-
-# tempcode
-latest_sonar = {
-    "front": 999,
-    "left": 999,
-    "right": 999
-}
+obstacle_detected_flag = False
 
 autonomous_started = False
 
@@ -68,44 +61,31 @@ Bridge.provide("print_movement", printMovement)
 # ============================================================
 # Sonar part
 # ============================================================
-def on_sonar_data1(msg):
+def on_is_obstacle(msg):
     """
-    Sonar 1 is treated as the front ultrasonic sensor.
+    Receive obstacle detection result from Arduino.
+    Arduino sends:
+    Bridge.notify("isObstacle", 1);  # obstacle detected
+    Bridge.notify("isObstacle", 0);  # no obstacle
     """
+
     try:
-        latest_sonar["front"] = int(msg)
+        value = int(msg)
     except ValueError:
-        pass
+        print("Invalid obstacle message from Arduino:", msg)
+        return
+    
+    global obstacle_detected_flag
+    if value == 1:
+        obstacle_detected_flag = True
+        print("Obstacle detected by Arduino")
+    elif value == 0:
+        obstacle_detected_flag = False
+        print("No obstacle detected by Arduino")
+    else:
+        print("Unknown obstacle state from Arduino:", msg)
 
-    print("SONAR1 / FRONT:", msg)
-
-
-def on_sonar_data2(msg):
-    """
-    Sonar 2 is treated as the left ultrasonic sensor.
-    """
-    try:
-        latest_sonar["left"] = int(msg)
-    except ValueError:
-        pass
-
-    print("SONAR2 / LEFT:", msg)
-
-
-def on_sonar_data3(msg):
-    """
-    Sonar 3 is treated as the right ultrasonic sensor.
-    """
-    try:
-        latest_sonar["right"] = int(msg)
-    except ValueError:
-        pass
-
-    print("SONAR3 / RIGHT:", msg)
-
-Bridge.provide("sonar_data1", on_sonar_data1)
-Bridge.provide("sonar_data2", on_sonar_data2)
-Bridge.provide("sonar_data3", on_sonar_data3)
+Bridge.provide("isObstacle", on_is_obstacle)
 
 
 # ============================================================
@@ -160,23 +140,8 @@ def load_arduino_commands(command_file):
 # ============================================================
 # Obstacle avoidance
 # ============================================================
-
 def obstacle_detected():
-    """
-    Check whether there is an obstacle in front of the robot.
-    Return:
-    True  = obstacle detected
-    False = no obstacle
-    """
-
-    front_distance = latest_sonar["front"]
-
-    if front_distance != -1 and front_distance < OBSTACLE_THRESHOLD_CM:
-        print(f"Obstacle detected in front: {front_distance} cm")
-        return True
-
-    return False
-
+    return obstacle_detected_flag
 
 def avoid_obstacle():
     """

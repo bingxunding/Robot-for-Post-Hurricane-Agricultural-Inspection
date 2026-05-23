@@ -67,13 +67,9 @@ class Sonar {
       duration = pulseIn(echoPin, HIGH, 30000);
 
       if (duration == 0) {
-
         return -1;
-
       }
-      
       distance = duration * 0.0343 / 2;
-      
       return distance;
     }
 };
@@ -153,6 +149,27 @@ void bridge_handshake_ack() {
   bridge_ready = true;
 }
 
+const int obstacleSafeDistance = 20;
+void detect_obstacle()
+{
+  // cm
+  const int initData = -1;
+  int d1 = sonar1.getDistance();
+  int d2 = sonar2.getDistance();
+  int d3 = sonar3.getDistance();
+  if ( (d1 != initData && d1 < obstacleSafeDistance)
+      || (d2 != initData && d2 < obstacleSafeDistance)
+      || (d3 != initData && d3 < obstacleSafeDistance))
+  {
+    Bridge.notify("isObstacle", 1);
+  }
+  else
+  {
+    Bridge.notify("isObstacle", 0);
+  }
+}
+
+
 int get_sonar_1();
 int get_sonar_2();
 int get_sonar_3();
@@ -197,25 +214,9 @@ void loop() {
     lastHandshakeTime = millis();
   }
 
-  int d1 = -1, d2 = -1, d3 = -1;
-
-  d1 = sonar1.getDistance();
-  if (d1!=-1){
-    Bridge.notify("sonar_data1",String(d1));
-    Serial.println("Ciao");
-  }
-  d2 = sonar2.getDistance();
-  if (d2!=-1){
-    Bridge.notify("sonar_data2",String(d2));
-    Serial.println("Ciao2");
-  }
-  d3 = sonar3.getDistance();
-  if (d3!=-1){
-    Bridge.notify("sonar_data3",String(d3));
-    Serial.println("Ciao3");
-  }
+  detect_obstacle();
+  // maybe it is too short time????
   delay(10);  
-
 }
 
 void setServoSpeed(int speed){
