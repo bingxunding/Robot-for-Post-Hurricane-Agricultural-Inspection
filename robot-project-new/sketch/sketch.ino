@@ -13,6 +13,7 @@ const int IN3 = 13;
 const int IN4 = 7;   
 
 int motorSpeed = 255;  
+int curvaturePercentage = 20;
 
 const int servoPin = 5;
 Servo myServo;
@@ -149,6 +150,37 @@ void turn_right() {
   set_led4_color(true, true, false);
 
   Bridge.notify("print_movement","right");
+}
+
+// supposing the rightmotor is ENA
+void turn_left_slowly() {
+
+  int internalWheelSpeed = motorSpeed * (100 - curvaturePercentage) / 100;
+
+  digitalWrite(IN1, HIGH);     
+  digitalWrite(IN2, LOW);  
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  analogWrite(ENA, internalWheelSpeed);  
+  analogWrite(ENB, motorSpeed);
+  set_led4_color(false, false, true);
+  Bridge.notify("print_movement","left_slowly");
+}
+
+// supposing the rightmotor is ENA
+void turn_right_slowly() {
+
+  int internalWheelSpeed = motorSpeed * (100 - curvaturePercentage) / 100;
+
+  digitalWrite(IN1, HIGH);     
+  digitalWrite(IN2, LOW);  
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  analogWrite(ENA, motorSpeed);
+  analogWrite(ENB, internalWheelSpeed);
+  set_led4_color(true, true, false);
+
+  Bridge.notify("print_movement","right_slowly");
 }
 
 void stop_motors() {

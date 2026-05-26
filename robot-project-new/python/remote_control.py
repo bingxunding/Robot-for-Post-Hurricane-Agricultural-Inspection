@@ -27,10 +27,12 @@ def on_move(id, message):
             Bridge.call("move_backward")
         elif cmd == "left":
             ui.send_message("debug", {"text": "Bridge: left"})
-            Bridge.call("turn_left")
+            #Bridge.call("turn_left")
+            Bridge.call("turn_left_slowly")
         elif cmd == "right":
             ui.send_message("debug", {"text": "Bridge: right"})
-            Bridge.call("turn_right")
+            #Bridge.call("turn_right")
+            Bridge.call("turn_right_slowly")
         elif cmd == "stop":
             ui.send_message("debug", {"text": "Bridge: stop"})
             Bridge.call("stop_motors")
