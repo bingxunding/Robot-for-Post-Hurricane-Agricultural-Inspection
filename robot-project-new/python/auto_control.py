@@ -4,6 +4,7 @@ import threading
 import os
 import numpy as np
 import math
+import requests
 
 # ============================================================
 # Configuration
@@ -37,6 +38,27 @@ MOVE_DISTANCE_PER_STEP = 0.8063467359130036
 
 # Safety timeout for one forward/backward movement
 MOVE_TIMEOUT = 3.0
+
+# --- Configurazione IP dell'ESP32 ---
+ESP32_IP = "172.20.10.3"  # <- Sostituisci con l'IP che vedi nel Serial Monitor dell'ESP32
+
+URL_FORWARD = f"http://{ESP32_IP}/forward"
+URL_BACKWARD = f"http://{ESP32_IP}/backward"
+URL_ROTATE_RIGHT = f"http://{ESP32_IP}/rotate_right"
+URL_ROTATE_LEFT = f"http://{ESP32_IP}/rotate_left"
+URL_TURN_RIGHT = f"http://{ESP32_IP}/turn_right"
+URL_TURN_LEFT = f"http://{ESP32_IP}/turn_left"
+URL_TURN_STOP = f"http://{ESP32_IP}/stop"
+
+def send_command_to_ESP (url, command_name):
+    """Invia il comando HTTP all'ESP32 e stampa la risposta."""
+    try:
+        print(f"Invio comando: {command_name} -> {url}")
+        response = requests.get(url, timeout=5)
+        print(f"Risposta ESP32: '{response.text}'")
+        response.close()
+    except requests.exceptions.RequestException as e:
+        print(f"Errore: {e}")
 
 # ============================================================
 # Arduino callback functions
@@ -270,6 +292,7 @@ def turn_right_by_angle(target_angle_deg=90):
     reset_yaw()
 
     Bridge.call("turn_right")
+    send_command_to_ESP(URL_ROTATE_RIGHT, "rotate_right")
 
     start_time = time.time()
 
@@ -291,6 +314,7 @@ def turn_left_by_angle(target_angle_deg=90):
     reset_yaw()
 
     Bridge.call("turn_left")
+    send_command_to_ESP(URL_ROTATE_LEFT, "rotate_left")
 
     start_time = time.time()
 
@@ -315,6 +339,7 @@ def move_forward_by_distance(target_distance=MOVE_DISTANCE_PER_STEP):
     reset_motion_estimation()
 
     Bridge.call("move_forward")
+    send_command_to_ESP(URL_FORWARD, "forward")
 
     start_time = time.time()
 
@@ -344,6 +369,7 @@ def move_backward_by_distance(target_distance=MOVE_DISTANCE_PER_STEP):
     reset_motion_estimation()
 
     Bridge.call("move_backward")
+    send_command_to_ESP(URL_BACKWARD, "backward")
 
     start_time = time.time()
 

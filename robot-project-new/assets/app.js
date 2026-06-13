@@ -33,7 +33,7 @@ try {
 
         socket.on("debug", (msg) => {
             setStatus(msg.text);
-            alert(msg.text);
+            //alert(msg.text);
         });
     }
 } catch (e) {

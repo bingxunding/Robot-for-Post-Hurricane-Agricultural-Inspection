@@ -1,5 +1,5 @@
 {
-    "control_mode": "auto",
+    "control_mode": "remote",
 
     "command_file_path": "input_data/arduino_commands.txt",
     "step_forward_time": 5,
