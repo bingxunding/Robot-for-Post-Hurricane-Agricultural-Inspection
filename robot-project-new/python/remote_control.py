@@ -43,6 +43,7 @@ def on_move(id, message):
     try:
         if cmd == "forward":
             ui.send_message("debug", {"text": "Bridge: forward"})
+            print("MIAO")
             Bridge.call("move_forward")
             send_command_to_ESP(URL_FORWARD, cmd)
 

@@ -255,6 +255,8 @@ void setup() {
   Bridge.provide("move_backward", move_backward);
   Bridge.provide("turn_left", turn_left);
   Bridge.provide("turn_right", turn_right);
+  Bridge.provide("turn_left_slowly", turn_left_slowly);
+  Bridge.provide("turn_right_slowly", turn_right_slowly);
   Bridge.provide("stop_motors", stop_motors);
   
   Bridge.provide("setServoSpeed", setServoSpeed);

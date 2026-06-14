@@ -280,12 +280,12 @@ Adafruit_BusIO_Register.o: \
  /home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.55.0/cores/arduino/time_macros.h \
  /home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.55.0/cores/arduino/overloads.h \
  /home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.55.0/variants/arduino_uno_q_stm32u585xx/postvariant.h \
- /home/arduino/.arduino15/internal/Arduino_RouterBridge_0.4.1_d378119a47d2c8c4/Arduino_RouterBridge/src/Arduino_RouterBridge.h \
- /home/arduino/.arduino15/internal/Arduino_RouterBridge_0.4.1_d378119a47d2c8c4/Arduino_RouterBridge/src/bridge.h \
- /home/arduino/.arduino15/internal/Arduino_RPClite_0.2.1_ce72ff552a496aef/Arduino_RPClite/src/Arduino_RPClite.h \
- /home/arduino/.arduino15/internal/Arduino_RPClite_0.2.1_ce72ff552a496aef/Arduino_RPClite/src/transport.h \
- /home/arduino/.arduino15/internal/Arduino_RPClite_0.2.1_ce72ff552a496aef/Arduino_RPClite/src/client.h \
- /home/arduino/.arduino15/internal/Arduino_RPClite_0.2.1_ce72ff552a496aef/Arduino_RPClite/src/error.h \
+ /home/arduino/.arduino15/internal/Arduino_RouterBridge_0.4.2_2bacd18211ad070f/Arduino_RouterBridge/src/Arduino_RouterBridge.h \
+ /home/arduino/.arduino15/internal/Arduino_RouterBridge_0.4.2_2bacd18211ad070f/Arduino_RouterBridge/src/bridge.h \
+ /home/arduino/.arduino15/internal/Arduino_RPClite_0.3.0_66fefd6c76c3d010/Arduino_RPClite/src/Arduino_RPClite.h \
+ /home/arduino/.arduino15/internal/Arduino_RPClite_0.3.0_66fefd6c76c3d010/Arduino_RPClite/src/transport.h \
+ /home/arduino/.arduino15/internal/Arduino_RPClite_0.3.0_66fefd6c76c3d010/Arduino_RPClite/src/client.h \
+ /home/arduino/.arduino15/internal/Arduino_RPClite_0.3.0_66fefd6c76c3d010/Arduino_RPClite/src/error.h \
  /home/arduino/.arduino15/internal/MsgPack_0.4.2_a0d4adc5044d022c/MsgPack/MsgPack.h \
  /home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.55.0/cores/arduino/DebugLog.h \
  /home/arduino/.arduino15/internal/DebugLog_0.8.4_c199e2cf6415ecc8/DebugLog/DebugLogDisable.h \
@@ -305,21 +305,21 @@ Adafruit_BusIO_Register.o: \
  /home/arduino/.arduino15/internal/MsgPack_0.4.2_a0d4adc5044d022c/MsgPack/MsgPack/Utility.h \
  /home/arduino/.arduino15/internal/DebugLog_0.8.4_c199e2cf6415ecc8/DebugLog/DebugLogRestoreState.h \
  /home/arduino/.arduino15/internal/DebugLog_0.8.4_c199e2cf6415ecc8/DebugLog/DebugLogEnable.h \
- /home/arduino/.arduino15/internal/Arduino_RPClite_0.2.1_ce72ff552a496aef/Arduino_RPClite/src/decoder_manager.h \
- /home/arduino/.arduino15/internal/Arduino_RPClite_0.2.1_ce72ff552a496aef/Arduino_RPClite/src/decoder.h \
- /home/arduino/.arduino15/internal/Arduino_RPClite_0.2.1_ce72ff552a496aef/Arduino_RPClite/src/rpclite_utils.h \
- /home/arduino/.arduino15/internal/Arduino_RPClite_0.2.1_ce72ff552a496aef/Arduino_RPClite/src/server.h \
- /home/arduino/.arduino15/internal/Arduino_RPClite_0.2.1_ce72ff552a496aef/Arduino_RPClite/src/request.h \
- /home/arduino/.arduino15/internal/Arduino_RPClite_0.2.1_ce72ff552a496aef/Arduino_RPClite/src/dispatcher.h \
- /home/arduino/.arduino15/internal/Arduino_RPClite_0.2.1_ce72ff552a496aef/Arduino_RPClite/src/wrapper.h \
- /home/arduino/.arduino15/internal/Arduino_RPClite_0.2.1_ce72ff552a496aef/Arduino_RPClite/src/SerialTransport.h \
- /home/arduino/.arduino15/internal/Arduino_RouterBridge_0.4.1_d378119a47d2c8c4/Arduino_RouterBridge/src/monitor.h \
+ /home/arduino/.arduino15/internal/Arduino_RPClite_0.3.0_66fefd6c76c3d010/Arduino_RPClite/src/decoder_manager.h \
+ /home/arduino/.arduino15/internal/Arduino_RPClite_0.3.0_66fefd6c76c3d010/Arduino_RPClite/src/decoder.h \
+ /home/arduino/.arduino15/internal/Arduino_RPClite_0.3.0_66fefd6c76c3d010/Arduino_RPClite/src/rpclite_utils.h \
+ /home/arduino/.arduino15/internal/Arduino_RPClite_0.3.0_66fefd6c76c3d010/Arduino_RPClite/src/server.h \
+ /home/arduino/.arduino15/internal/Arduino_RPClite_0.3.0_66fefd6c76c3d010/Arduino_RPClite/src/request.h \
+ /home/arduino/.arduino15/internal/Arduino_RPClite_0.3.0_66fefd6c76c3d010/Arduino_RPClite/src/dispatcher.h \
+ /home/arduino/.arduino15/internal/Arduino_RPClite_0.3.0_66fefd6c76c3d010/Arduino_RPClite/src/wrapper.h \
+ /home/arduino/.arduino15/internal/Arduino_RPClite_0.3.0_66fefd6c76c3d010/Arduino_RPClite/src/SerialTransport.h \
+ /home/arduino/.arduino15/internal/Arduino_RouterBridge_0.4.2_2bacd18211ad070f/Arduino_RouterBridge/src/monitor.h \
  /home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.55.0/cores/arduino/api/RingBuffer.h \
- /home/arduino/.arduino15/internal/Arduino_RouterBridge_0.4.1_d378119a47d2c8c4/Arduino_RouterBridge/src/tcp_client.h \
+ /home/arduino/.arduino15/internal/Arduino_RouterBridge_0.4.2_2bacd18211ad070f/Arduino_RouterBridge/src/tcp_client.h \
  /home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.55.0/cores/arduino/api/Client.h \
- /home/arduino/.arduino15/internal/Arduino_RouterBridge_0.4.1_d378119a47d2c8c4/Arduino_RouterBridge/src/tcp_server.h \
- /home/arduino/.arduino15/internal/Arduino_RouterBridge_0.4.1_d378119a47d2c8c4/Arduino_RouterBridge/src/hci.h \
- /home/arduino/.arduino15/internal/Arduino_RouterBridge_0.4.1_d378119a47d2c8c4/Arduino_RouterBridge/src/udp_bridge.h \
+ /home/arduino/.arduino15/internal/Arduino_RouterBridge_0.4.2_2bacd18211ad070f/Arduino_RouterBridge/src/tcp_server.h \
+ /home/arduino/.arduino15/internal/Arduino_RouterBridge_0.4.2_2bacd18211ad070f/Arduino_RouterBridge/src/hci.h \
+ /home/arduino/.arduino15/internal/Arduino_RouterBridge_0.4.2_2bacd18211ad070f/Arduino_RouterBridge/src/udp_bridge.h \
  /home/arduino/.arduino15/internal/Adafruit_BusIO_1.17.4_7b46ea3f5fdb9ecd/Adafruit\ BusIO/Adafruit_GenericDevice.h \
  /home/arduino/.arduino15/internal/Adafruit_BusIO_1.17.4_7b46ea3f5fdb9ecd/Adafruit\ BusIO/Adafruit_I2CDevice.h \
  /home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.55.0/libraries/Wire/Wire.h \

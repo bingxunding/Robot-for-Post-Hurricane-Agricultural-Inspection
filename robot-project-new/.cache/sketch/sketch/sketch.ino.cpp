@@ -15,6 +15,7 @@ const int IN3 = 13;
 const int IN4 = 7;   
 
 int motorSpeed = 255;  
+int curvaturePercentage = 20;
 
 const int servoPin = 5;
 Servo myServo;
@@ -38,29 +39,33 @@ Adafruit_MPU6050 mpu;
 
 int FREQUENCY = 500; //500ms
 
-#line 39 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
+#line 40 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
 void send_IMU_data();
-#line 102 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
+#line 103 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
 void set_led4_color(bool r, bool g, bool b);
-#line 108 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
+#line 109 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
 void move_forward();
-#line 119 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
+#line 120 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
 void move_backward();
-#line 130 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
+#line 131 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
 void turn_left();
-#line 141 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
+#line 142 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
 void turn_right();
-#line 154 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
+#line 156 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
+void turn_left_slowly();
+#line 171 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
+void turn_right_slowly();
+#line 186 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
 void stop_motors();
-#line 169 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
+#line 201 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
 void bridge_handshake_ack();
-#line 174 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
+#line 206 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
 void detect_obstacle();
-#line 197 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
+#line 229 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
 void setup();
-#line 234 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
+#line 268 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
 void loop();
-#line 39 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
+#line 40 "/home/arduino/ArduinoApps/Robot-for-Post-Hurricane-Agricultural-Inspection/robot-project-new/sketch/sketch.ino"
 void send_IMU_data(){
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
@@ -176,6 +181,37 @@ void turn_right() {
   Bridge.notify("print_movement","right");
 }
 
+// supposing the rightmotor is ENA
+void turn_left_slowly() {
+
+  int internalWheelSpeed = motorSpeed * (100 - curvaturePercentage) / 100;
+
+  digitalWrite(IN1, HIGH);     
+  digitalWrite(IN2, LOW);  
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  analogWrite(ENA, internalWheelSpeed);  
+  analogWrite(ENB, motorSpeed);
+  set_led4_color(false, false, true);
+  Bridge.notify("print_movement","left_slowly");
+}
+
+// supposing the rightmotor is ENA
+void turn_right_slowly() {
+
+  int internalWheelSpeed = motorSpeed * (100 - curvaturePercentage) / 100;
+
+  digitalWrite(IN1, HIGH);     
+  digitalWrite(IN2, LOW);  
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  analogWrite(ENA, motorSpeed);
+  analogWrite(ENB, internalWheelSpeed);
+  set_led4_color(true, true, false);
+
+  Bridge.notify("print_movement","right_slowly");
+}
+
 void stop_motors() {
 
   digitalWrite(IN1, LOW);     
@@ -248,6 +284,8 @@ void setup() {
   Bridge.provide("move_backward", move_backward);
   Bridge.provide("turn_left", turn_left);
   Bridge.provide("turn_right", turn_right);
+  Bridge.provide("turn_left_slowly", turn_left_slowly);
+  Bridge.provide("turn_right_slowly", turn_right_slowly);
   Bridge.provide("stop_motors", stop_motors);
   
   Bridge.provide("setServoSpeed", setServoSpeed);
