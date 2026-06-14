@@ -9,13 +9,13 @@ const char* password = "12345ciaooo";
 WebServer server(80);
 
 // ---INITIALIZE MOTOR PINS ---///
-const int ENA = 3;   
+const int ENA = 22;   
 const int IN1 = 4;  
 const int IN2 = 2;  
 
-const int ENB = 6;   
+const int ENB = 5;   
 const int IN3 = 13; 
-const int IN4 = 7;   
+const int IN4 = 21;   
 
 int motorSpeed = 255;  
 int curvaturePercentage = 20;
@@ -96,41 +96,49 @@ void stop_motors() {
 
 void initialize_HTTP_commands () {
   // --- Definizione degli endpoint (i "comandi" via web)---
+  server.on("/on", []() {
+    Serial.println("Comando ricevuto: ON");
+    server.send(200, "text/plain", "on");
+  });
   server.on("/forward", []() {
+    Serial.println("Comando ricevuto: forward");
     move_forward();
     server.send(200, "text/plain", "forward");
-    Serial.println("Comando ricevuto: forward");
   });
   server.on("/backward", []() {
+    Serial.println("Comando ricevuto: backward");
     move_backward();
     server.send(200, "text/plain", "backward");
-    Serial.println("Comando ricevuto: backward");
   });
   server.on("/rotate_right", []() {
+    Serial.println("Comando ricevuto: rotate_right");
     turn_right();
     server.send(200, "text/plain", "rotate_right");
-    Serial.println("Comando ricevuto: rotate_right");
   });
   server.on("/rotate_left", []() {
+    Serial.println("Comando ricevuto: rotate_left");
     turn_left();
     server.send(200, "text/plain", "rotate_left");
-    Serial.println("Comando ricevuto: rotate_left");
   });
   server.on("/turn_right", []() {
+    Serial.println("Comando ricevuto: turn_right");
     turn_right_slowly();
     server.send(200, "text/plain", "turn_right");
-    Serial.println("Comando ricevuto: turn_right");
   });
   server.on("/turn_left", []() {
+    Serial.println("Comando ricevuto: turn_left");
     turn_left_slowly();
     server.send(200, "text/plain", "turn_left");
-    Serial.println("Comando ricevuto: turn_left");
   });
   server.on("/stop", []() {
+    Serial.println("Comando ricevuto: stop");
     stop_motors();
     server.send(200, "text/plain", "stop");
-    Serial.println("Comando ricevuto: stop");
   });
+  server.onNotFound([]() {
+    server.send(404, "text/plain", "Endpoint non trovato");
+    Serial.println("Richiesta non valida: " + server.uri());
+});
 }
 
 void setup() {
@@ -149,6 +157,7 @@ void setup() {
   initialize_HTTP_commands();
   // Avvia il server
   server.begin();
+  Serial.println("Firmware version 1.0 – flashed at " + String(__TIME__));
   Serial.println("Server HTTP avviato. In ascolto per comandi...");
 }
 
