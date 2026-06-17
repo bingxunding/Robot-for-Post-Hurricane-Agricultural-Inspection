@@ -15,7 +15,7 @@ const int IN4 = 8;
 int motorSpeed = 255;  
 int curvaturePercentage = 100;
 
-const int servoPin = 5;
+const int servoPin = 10;
 Servo myServo;
 
 void setServoSpeed(int speed);
@@ -258,8 +258,6 @@ void setup() {
   pinMode(ENB, OUTPUT);
   pinMode(IN3, OUTPUT);
   pinMode(IN4, OUTPUT);
-    
-  myServo.attach(servoPin);
 
   pinMode(LED4_R, OUTPUT);
   pinMode(LED4_G, OUTPUT);
@@ -268,6 +266,8 @@ void setup() {
   setupSonars();
 
   Bridge.begin();
+  
+  myServo.attach(servoPin);
   stop_motors();
   
   Bridge.provide("move_forward", move_forward);
@@ -302,13 +302,19 @@ void loop() {
     lastIMUtime = millis();
     send_IMU_data();
   }
-  detect_obstacle();
+  //detect_obstacle();
 }
 
-void setServoSpeed(int speed){
-  Serial.print("BAU");
+void setServoSpeed(int speed) {
+  // Clamp speed to valid range (0–180)
+  if (speed < 0) speed = 0;
+  if (speed > 180) speed = 180;
+  Serial.println(speed);
   myServo.write(speed);
+  Serial.print("Servo set to: ");
+  Serial.println(speed);
 }
+
 void stopServoMotor(){
   myServo.write(90);
 }
