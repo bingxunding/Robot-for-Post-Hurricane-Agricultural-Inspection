@@ -210,7 +210,8 @@ void bridge_handshake_ack() {
   bridge_ready = true;
 }
 
-const int obstacleSafeDistance = 200;
+const int obstacleSafeDistance = 200;      // 200 cm
+const int centerDangerDistance = 50;       // 50 cm, only for center sonar s2
 void detect_obstacle()
 {
   // cm
@@ -218,12 +219,22 @@ void detect_obstacle()
   int d1 = sonar1.getDistance();
   int d2 = sonar2.getDistance();
   int d3 = sonar3.getDistance();
-  if ( (d1 != initData && d1 < obstacleSafeDistance)
-      || (d2 != initData && d2 < obstacleSafeDistance)
-      || (d3 != initData && d3 < obstacleSafeDistance))
+
+  // Highest priority:
+  // if the center sonar s2 detects an obstacle closer than 50 cm
+  if (d1 != initData && d1 < centerDangerDistance)
+  {
+    Bridge.notify("isObstacle", 2);
+  }
+  // Normal obstacle detection:
+  // if any sonar detects an obstacle closer than 200 cm
+  else if ( (d1 != initData && d1 < obstacleSafeDistance)
+         || (d2 != initData && d2 < obstacleSafeDistance)
+         || (d3 != initData && d3 < obstacleSafeDistance) )
   {
     Bridge.notify("isObstacle", 1);
   }
+  // No obstacle detected
   else
   {
     Bridge.notify("isObstacle", 0);

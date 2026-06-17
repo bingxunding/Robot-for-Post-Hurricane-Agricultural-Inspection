@@ -31,6 +31,7 @@ from config_loader import (
 )
 # Obstacle avoidance configuration
 obstacle_detected_flag = False
+emergency_stop_flag = False
 
 autonomous_started = False
 
@@ -125,8 +126,10 @@ Bridge.provide("print_movement", printMovement)
 def on_is_obstacle(msg):
     """
     Receive obstacle detection result from Arduino.
+
     Arduino sends:
-    Bridge.notify("isObstacle", 1);  # obstacle detected
+    Bridge.notify("isObstacle", 2);  # center sonar detected obstacle < 50 cm
+    Bridge.notify("isObstacle", 1);  # any sonar detected obstacle < 200 cm
     Bridge.notify("isObstacle", 0);  # no obstacle
     """
 
@@ -135,14 +138,38 @@ def on_is_obstacle(msg):
     except ValueError:
         print("Invalid obstacle message from Arduino:", msg)
         return
-    
+
     global obstacle_detected_flag
-    if value == 1:
+    global emergency_stop_flag
+
+    if value == 2:
+        # Highest priority: center sonar too close
         obstacle_detected_flag = True
-        print("Obstacle detected by Arduino")
+        emergency_stop_flag = True
+        print("EMERGENCY STOP: center sonar detected obstacle closer than 50 cm")
+
+        try:
+            send_command_to_ESP(URL_TURN_STOP, "stop")
+        except Exception as e:
+            print("Failed to send stop command to ESP32:", e)
+
+        try:
+            Bridge.call("stop_motors")
+        except Exception as e:
+            print("Failed to stop Arduino motors:", e)
+
+    elif value == 1:
+        # Normal obstacle detected
+        if not emergency_stop_flag:
+            obstacle_detected_flag = True
+            print("Obstacle detected by Arduino")
+
     elif value == 0:
-        obstacle_detected_flag = False
-        print("No obstacle detected by Arduino")
+        # No obstacle
+        if not emergency_stop_flag:
+            obstacle_detected_flag = False
+            print("No obstacle detected by Arduino")
+
     else:
         print("Unknown obstacle state from Arduino:", msg)
 
@@ -204,44 +231,87 @@ def load_arduino_commands(command_file):
 def obstacle_detected():
     return obstacle_detected_flag
 
+def emergency_stopped():
+    return emergency_stop_flag
+
 def avoid_obstacle():
     """
     Simple local obstacle avoidance behavior.
     Strategy:
     stop
     turn right
-    move forward a little
     turn left
+    turn right
     continue original path
+    If center sonar detects an obstacle closer than 50 cm,
+    emergency_stop_flag will become True and the robot must stop immediately.
     """
+
     print("Avoiding obstacle...!!!!!!!!!!!!!")
+
+    if emergency_stopped():
+        print("Emergency stop before obstacle avoidance.")
+        Bridge.call("stop_motors")
+        send_command_to_ESP(URL_TURN_STOP, "stop")
+        return
+
     Bridge.call("stop_motors")
+    send_command_to_ESP(URL_TURN_STOP, "stop")
     time.sleep(0.3)
 
+    if emergency_stopped():
+        print("Emergency stop after initial stop.")
+        Bridge.call("stop_motors")
+        send_command_to_ESP(URL_TURN_STOP, "stop")
+        return
+
+    # Step 1: turn right
     if USE_IMU:
         turn_right_by_angle(45)
     else:
         send_command_to_ESP(URL_TURN_RIGHT, "turn_right_slowly")
-        threading.Timer(CONNECTION_DELAY, lambda: Bridge.call("turn_right_slowly")).start()
-        time.sleep(OBSTACAL_RIGHT_TIME)
-        #Bridge.call("stop_motors")
-        #time.sleep(STEP_STOP_TIME)
+        threading.Timer(
+            CONNECTION_DELAY,
+            lambda: Bridge.call("turn_right_slowly")
+        ).start()
 
+    if emergency_stopped():
+        print("Emergency stop after obstacle right turn.")
+        Bridge.call("stop_motors")
+        send_command_to_ESP(URL_TURN_STOP, "stop")
+        return
+
+    # Step 2: turn left
     if USE_IMU:
         turn_left_by_angle(45)
     else:
         send_command_to_ESP(URL_TURN_LEFT, "turn_left_slowly")
-        threading.Timer(CONNECTION_DELAY, lambda: Bridge.call("turn_left_slowly")).start()
-        time.sleep(OBSTACAL_LEFT_TIME)
+        threading.Timer(
+            CONNECTION_DELAY,
+            lambda: Bridge.call("turn_left_slowly")
+        ).start()
 
+    if emergency_stopped():
+        print("Emergency stop after obstacle left turn.")
+        Bridge.call("stop_motors")
+        send_command_to_ESP(URL_TURN_STOP, "stop")
+        return
+
+    # Step 3: turn right again
     if USE_IMU:
         turn_right_by_angle(45)
     else:
         send_command_to_ESP(URL_TURN_RIGHT, "turn_right_slowly")
-        threading.Timer(CONNECTION_DELAY, lambda: Bridge.call("turn_right_slowly")).start()
-        time.sleep(OBSTACAL_RIGHT_TIME)
-        #Bridge.call("stop_motors")
-        #time.sleep(STEP_STOP_TIME)
+        threading.Timer(
+            CONNECTION_DELAY,
+            lambda: Bridge.call("turn_right_slowly")
+        ).start()
+
+    if emergency_stopped():
+        print("Emergency stop after obstacle avoidance.")
+        Bridge.call("stop_motors")
+        send_command_to_ESP(URL_TURN_STOP, "stop")
+        return
 
     print("Obstacle avoidance completed.")
 
@@ -428,6 +498,12 @@ def execute_command(command, steps):
     move_forward -> stop
     """
     for i in range(steps):
+        if emergency_stopped():
+            print("Emergency stop active. Stop executing current command.")
+            Bridge.call("stop_motors")
+            send_command_to_ESP(URL_TURN_STOP, "stop")
+            return
+    
         print(f"Step {i + 1}/{steps}: {command}")
         if command == "forward":
             if obstacle_detected():
@@ -498,6 +574,7 @@ def run_autonomous_path():
     Main autonomous control logic.
     It reads arduino_commands.txt and sends movement commands to sketch.ino.
     """
+    # TEMP CODE 启动慢这里有责任，log看到很多calibration计算
     global USE_IMU
     calibration_start_time = time.time()
     calibration_timeout = 30
