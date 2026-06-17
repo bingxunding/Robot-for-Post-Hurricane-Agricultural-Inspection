@@ -309,7 +309,7 @@ def avoid_obstacle():
             lambda: Bridge.call("turn_right_slowly")
         ).start()
         time.sleep(OBSTACAL_RIGHT_TIME)
-        
+
     if emergency_stopped():
         print("Emergency stop after obstacle avoidance.")
         Bridge.call("stop_motors")
@@ -579,16 +579,18 @@ def run_autonomous_path():
     """
     # TEMP CODE 启动慢这里有责任，log看到很多calibration计算
     global USE_IMU
-    calibration_start_time = time.time()
-    calibration_timeout = 30
-    while not CALIBRATED:
-        print("Waiting for IMU calibration before autonomous path...")
-        if time.time() - calibration_start_time > calibration_timeout:
-            print("IMU calibration timeout. Starting with time-based turning fallback.")
-            USE_IMU = False
-            break
-        time.sleep(1)
-
+    if USE_IMU:
+        calibration_start_time = time.time()
+        calibration_timeout = 30
+        while not CALIBRATED:
+            print("Waiting for IMU calibration before autonomous path...")
+            if time.time() - calibration_start_time > calibration_timeout:
+                print("IMU calibration timeout. Starting with time-based turning fallback.")
+                USE_IMU = False
+                break
+            time.sleep(1)
+    else:
+        print("IMU disabled. Starting autonomous path immediately.")
     print("====================================")
     print("Autonomous control started")
     print("====================================")
@@ -764,6 +766,9 @@ def getIMU(text):
     global ACCEL_BIASES
     global GYRO_STDS
     global ACCEL_STDS
+
+    if not USE_IMU:
+        return
 
     if CALIBRATED:
         parsed_data = parseIMUdata(text)
