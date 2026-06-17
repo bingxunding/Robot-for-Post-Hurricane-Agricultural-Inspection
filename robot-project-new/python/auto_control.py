@@ -274,6 +274,7 @@ def avoid_obstacle():
             CONNECTION_DELAY,
             lambda: Bridge.call("turn_right_slowly")
         ).start()
+        time.sleep(OBSTACAL_RIGHT_TIME)
 
     if emergency_stopped():
         print("Emergency stop after obstacle right turn.")
@@ -290,6 +291,7 @@ def avoid_obstacle():
             CONNECTION_DELAY,
             lambda: Bridge.call("turn_left_slowly")
         ).start()
+        time.sleep(OBSTACAL_LEFT_TIME)
 
     if emergency_stopped():
         print("Emergency stop after obstacle left turn.")
@@ -306,7 +308,8 @@ def avoid_obstacle():
             CONNECTION_DELAY,
             lambda: Bridge.call("turn_right_slowly")
         ).start()
-
+        time.sleep(OBSTACAL_RIGHT_TIME)
+        
     if emergency_stopped():
         print("Emergency stop after obstacle avoidance.")
         Bridge.call("stop_motors")
