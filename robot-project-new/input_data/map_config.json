@@ -6,6 +6,10 @@
     "step_turn_time": 4,
     "step_stop_time": 2,
     "obstacle_threshold_cm": 20,
+
+    "obstacal_right_time": 5,
+    "obstacal_left_time": 5,
+    "obstacal_forward_time": 5,
   
     "scale_image_path": "pathGeneration/env-extra.jpg",
     "planning_image_path": "pathGeneration/env.jpg",

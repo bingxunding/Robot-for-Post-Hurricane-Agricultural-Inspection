@@ -210,7 +210,7 @@ void bridge_handshake_ack() {
   bridge_ready = true;
 }
 
-const int obstacleSafeDistance = 20;
+const int obstacleSafeDistance = 100;
 void detect_obstacle()
 {
   // cm

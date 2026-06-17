@@ -23,3 +23,7 @@ STEP_FORWARD_TIME = config["step_forward_time"]
 STEP_TURN_TIME = config["step_turn_time"]
 STEP_STOP_TIME = config["step_stop_time"]
 OBSTACLE_THRESHOLD_CM = config["obstacle_threshold_cm"]
+
+OBSTACAL_RIGHT_TIME = config["obstacal_right_time"]
+OBSTACAL_LEFT_TIME = config["obstacal_left_time"]
+OBSTACAL_FORWARD_TIME = config["obstacal_forward_time"]

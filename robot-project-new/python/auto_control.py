@@ -18,10 +18,17 @@ COMMAND_FILE = os.path.join(
     "arduino_commands.txt"
 )
 
-STEP_FORWARD_TIME = 0.5
-STEP_TURN_TIME = 0.4
-STEP_STOP_TIME = 0.2
-
+#STEP_FORWARD_TIME = 0.5
+#STEP_TURN_TIME = 0.4
+#STEP_STOP_TIME = 0.2
+from config_loader import (
+    STEP_FORWARD_TIME,
+    STEP_TURN_TIME,
+    STEP_STOP_TIME,
+    OBSTACAL_RIGHT_TIME,
+    OBSTACAL_LEFT_TIME,
+    OBSTACAL_FORWARD_TIME
+)
 # Obstacle avoidance configuration
 obstacle_detected_flag = False
 
@@ -214,23 +221,18 @@ def avoid_obstacle():
     if USE_IMU:
         turn_right_by_angle(45)
     else:
-        Bridge.call("turn_right")
-        time.sleep(STEP_TURN_TIME)
-        Bridge.call("stop_motors")
-        time.sleep(STEP_STOP_TIME)
-
-    Bridge.call("move_forward")
-    time.sleep(STEP_FORWARD_TIME)
-    Bridge.call("stop_motors")
-    time.sleep(STEP_STOP_TIME)
+        send_command_to_ESP(URL_TURN_RIGHT, "turn_right_slowly")
+        threading.Timer(CONNECTION_DELAY, lambda: Bridge.call("turn_right_slowly")).start()
+        time.sleep(OBSTACAL_RIGHT_TIME)
+        #Bridge.call("stop_motors")
+        #time.sleep(STEP_STOP_TIME)
 
     if USE_IMU:
         turn_left_by_angle(45)
     else:
-        Bridge.call("turn_left")
-        time.sleep(STEP_TURN_TIME)
-        Bridge.call("stop_motors")
-        time.sleep(STEP_STOP_TIME)
+        send_command_to_ESP(URL_TURN_LEFT, "turn_left_slowly")
+        threading.Timer(CONNECTION_DELAY, lambda: Bridge.call("turn_left_slowly")).start()
+        time.sleep(OBSTACAL_LEFT_TIME)
 
     print("Obstacle avoidance completed.")
 
