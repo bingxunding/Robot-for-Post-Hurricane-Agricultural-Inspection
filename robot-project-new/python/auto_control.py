@@ -17,17 +17,9 @@ COMMAND_FILE = os.path.join(
     "arduino_commands.txt"
 )
 
-#STEP_FORWARD_TIME = 0.5
-#STEP_TURN_TIME = 0.4
-#STEP_STOP_TIME = 0.2
-from config_loader import (
-    STEP_FORWARD_TIME,
-    STEP_TURN_TIME,
-    STEP_STOP_TIME,
-)
-OBSTACAL_RIGHT_TIME = 10
-OBSTACAL_LEFT_TIME = 10
-OBSTACAL_FORWARD_TIME = 5
+STEP_FORWARD_TIME = 0.5
+STEP_TURN_TIME = 0.4
+STEP_STOP_TIME = 0.2
 
 # Obstacle avoidance configuration
 obstacle_detected_flag = False
@@ -183,25 +175,23 @@ def avoid_obstacle():
         turn_right_by_angle(45)
     else:
         Bridge.call("turn_right")
-        time.sleep(OBSTACAL_RIGHT_TIME)
-        #Bridge.call("stop_motors")
-        #time.sleep(STEP_STOP_TIME)
+        time.sleep(STEP_TURN_TIME)
+        Bridge.call("stop_motors")
+        time.sleep(STEP_STOP_TIME)
 
     Bridge.call("move_forward")
-    time.sleep(OBSTACAL_FORWARD_TIME)
-    #Bridge.call("stop_motors")
-    #time.sleep(STEP_STOP_TIME)
+    time.sleep(STEP_FORWARD_TIME)
+    Bridge.call("stop_motors")
+    time.sleep(STEP_STOP_TIME)
 
     if USE_IMU:
         turn_left_by_angle(45)
     else:
         Bridge.call("turn_left")
-        time.sleep(OBSTACAL_LEFT_TIME)
-        #Bridge.call("stop_motors")
-        #time.sleep(STEP_STOP_TIME)
+        time.sleep(STEP_TURN_TIME)
+        Bridge.call("stop_motors")
+        time.sleep(STEP_STOP_TIME)
 
-    Bridge.call("move_forward")
-    time.sleep(OBSTACAL_FORWARD_TIME)
     print("Obstacle avoidance completed.")
 
 # ============================================================
