@@ -211,7 +211,7 @@ void bridge_handshake_ack() {
 }
 
 const int obstacleSafeDistance = 200;      // 200 cm
-const int centerDangerDistance = 50;       // 50 cm, only for center sonar s2
+const int centerDangerDistance = 35;       // 50 cm, only for center sonar s2
 void detect_obstacle()
 {
   // cm
