@@ -28,7 +28,7 @@ obstacle_detected_flag = False
 autonomous_started = False
 
 TURN_TIMEOUT = 5.0
-USE_IMU = True
+USE_IMU = False
 # One forward/backward step target distance.
 # From map scale:
 # meters_per_pixel = 0.08063467359130036
@@ -49,7 +49,25 @@ URL_ROTATE_LEFT = f"http://{ESP32_IP}/rotate_left"
 URL_TURN_RIGHT = f"http://{ESP32_IP}/turn_right"
 URL_TURN_LEFT = f"http://{ESP32_IP}/turn_left"
 URL_TURN_STOP = f"http://{ESP32_IP}/stop"
+URL_CURVATURE_PERCENTAGE = f"http://{ESP32_IP}/setcurvature"
+URL_MOTORSPEED = f"http://{ESP32_IP}/setspeed"
+CONNECTION_DELAY = 0.20
 
+# Get current motor speed from Arduino
+current_speed = Bridge.call("get_motor_speed")
+print(f"Current motor speed: {current_speed}")
+
+# Get current curvature percentage
+current_curve = Bridge.call("get_curvature")
+print(f"Current curvature: {current_curve}")
+
+try:
+    requests.get(f"http://{ESP32_IP}/setspeed?value={speed}", timeout=2)
+    requests.get(f"http://{ESP32_IP}/setcurvature?value={curve}", timeout=2)
+    print(f"Synchronized ESP32: speed={speed}, curvature={curve}")
+except Exception as e:
+    print(f"Failed to sync ESP32: {e}")
+    
 def send_command_to_ESP (url, command_name):
     """Invia il comando HTTP all'ESP32 e stampa la risposta."""
     try:
@@ -407,40 +425,55 @@ def execute_command(command, steps):
             if USE_IMU:
                 move_forward_by_distance(MOVE_DISTANCE_PER_STEP)
             else:
-                Bridge.call("move_forward")
+                #Bridge.call("move_forward")
+                send_command_to_ESP(URL_FORWARD, "forward")
+                threading.Timer(CONNECTION_DELAY, lambda: Bridge.call("move_forward")).start()
                 time.sleep(STEP_FORWARD_TIME)
-                Bridge.call("stop_motors")
-                time.sleep(STEP_STOP_TIME)
+                #Bridge.call("stop_motors")
+                #time.sleep(STEP_STOP_TIME)
 
         elif command == "backward":
             if USE_IMU:
                 move_backward_by_distance(MOVE_DISTANCE_PER_STEP)
             else:
-                Bridge.call("move_backward")
+                #Bridge.call("move_backward")
+                send_command_to_ESP(URL_BACKWARD, "backward")
+                threading.Timer(CONNECTION_DELAY, lambda: Bridge.call("move_backward")).start()
                 time.sleep(STEP_FORWARD_TIME)
-                Bridge.call("stop_motors")
-                time.sleep(STEP_STOP_TIME)
+                #Bridge.call("stop_motors")
+                #time.sleep(STEP_STOP_TIME)
 
         elif command == "left":
             if USE_IMU:
                 turn_left_by_angle(TURN_ANGLE_PER_STEP)
             else:
-                Bridge.call("turn_left")
+                #Bridge.call("turn_left")
+                #Bridge.call("turn_left_slowly")
+                send_command_to_ESP(URL_TURN_LEFT, "turn_left_slowly")
+                threading.Timer(CONNECTION_DELAY, lambda: Bridge.call("turn_left_slowly")).start()
+
                 time.sleep(STEP_TURN_TIME)
-                Bridge.call("stop_motors")
-                time.sleep(STEP_STOP_TIME)
+                #Bridge.call("stop_motors")
+                #time.sleep(STEP_STOP_TIME)
 
         elif command == "right":
             if USE_IMU:
                 turn_right_by_angle(TURN_ANGLE_PER_STEP)
             else:
-                Bridge.call("turn_right")
+                #Bridge.call("turn_right")
+                #Bridge.call("turn_right_slowly")
+                send_command_to_ESP(URL_TURN_RIGHT, "turn_right_slowly")
+                threading.Timer(CONNECTION_DELAY, lambda: Bridge.call("turn_right_slowly")).start()
+                
                 time.sleep(STEP_TURN_TIME)
-                Bridge.call("stop_motors")
-                time.sleep(STEP_STOP_TIME)
+                #Bridge.call("stop_motors")
+                #time.sleep(STEP_STOP_TIME)
 
         elif command == "stop":
-            Bridge.call("stop_motors")
+            #Bridge.call("stop_motors")
+            send_command_to_ESP(URL_TURN_STOP, "stop")
+            threading.Timer(CONNECTION_DELAY, lambda: Bridge.call("stop_motors")).start()
+            
             time.sleep(0.5)
 
         else:
