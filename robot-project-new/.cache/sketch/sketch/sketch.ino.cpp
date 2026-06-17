@@ -28,11 +28,11 @@ const int LED_G = LED4_G;
 const int LED_B = LED4_B;
 
 const int trigPin1 = A0;
-const int echoPin1 = A0;
-const int trigPin2 = A0;
-const int echoPin2 = A0;
-const int trigPin3 = A0;
-const int echoPin3 = A0;
+const int echoPin1 = A1;
+const int trigPin2 = A2;
+const int echoPin2 = A3;
+const int trigPin3 = A4;
+const int echoPin3 = A5;
 int distance;
 
 Adafruit_MPU6050 mpu;
@@ -243,7 +243,7 @@ void bridge_handshake_ack() {
   bridge_ready = true;
 }
 
-const int obstacleSafeDistance = 20;
+const int obstacleSafeDistance = 200;
 void detect_obstacle()
 {
   // cm
@@ -324,6 +324,7 @@ void loop() {
     lastIMUtime = millis();
     send_IMU_data();
   }
+  detect_obstacle();
 }
 
 void setServoSpeed(int speed){

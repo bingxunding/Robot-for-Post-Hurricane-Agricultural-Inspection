@@ -1,6 +1,2 @@
-forward:2
-right:5
-forward:2
-left:5
-forward:1
+forward:5
 stop:1

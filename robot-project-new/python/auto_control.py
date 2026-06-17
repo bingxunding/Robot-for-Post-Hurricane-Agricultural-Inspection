@@ -214,7 +214,7 @@ def avoid_obstacle():
     turn left
     continue original path
     """
-    print("Avoiding obstacle...")
+    print("Avoiding obstacle...!!!!!!!!!!!!!")
     Bridge.call("stop_motors")
     time.sleep(0.3)
 
@@ -233,6 +233,15 @@ def avoid_obstacle():
         send_command_to_ESP(URL_TURN_LEFT, "turn_left_slowly")
         threading.Timer(CONNECTION_DELAY, lambda: Bridge.call("turn_left_slowly")).start()
         time.sleep(OBSTACAL_LEFT_TIME)
+
+    if USE_IMU:
+        turn_right_by_angle(45)
+    else:
+        send_command_to_ESP(URL_TURN_RIGHT, "turn_right_slowly")
+        threading.Timer(CONNECTION_DELAY, lambda: Bridge.call("turn_right_slowly")).start()
+        time.sleep(OBSTACAL_RIGHT_TIME)
+        #Bridge.call("stop_motors")
+        #time.sleep(STEP_STOP_TIME)
 
     print("Obstacle avoidance completed.")
 

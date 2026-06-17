@@ -30,6 +30,7 @@ SECTIONS
         *(.rodata._Z13move_backwardv.str1.1)
         *(.rodata._Z13send_IMU_datav.str1.1)
         *(.rodata._Z13setServoSpeedi.str1.1)
+        *(.rodata._Z15detect_obstaclev.str1.1)
         *(.rodata._Z16turn_left_slowlyv.str1.1)
         *(.rodata._Z17turn_right_slowlyv.str1.1)
         *(.rodata._Z9turn_leftv.str1.1)
